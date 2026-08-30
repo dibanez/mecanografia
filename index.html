@@ -6,7 +6,7 @@
     <title>Mecanografía — aprende a escribir sin mirar</title>
     <meta
       name="description"
-      content="Curso de mecanografía en español: 31 lecciones progresivas, teclado en pantalla, guía de dedos y estadísticas de velocidad y precisión."
+      content="Curso de mecanografía para teclado español e inglés: tutorial de colocación de dedos, 31 lecciones progresivas por distribución, teclado en pantalla y estadísticas de velocidad y precisión."
     />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -24,11 +24,13 @@
         <span class="brand__name">Mecanografía</span>
       </a>
       <nav class="nav">
+        <a class="nav__link" href="#/tutorial" data-view="tutorial">Tutorial</a>
         <a class="nav__link" href="#/lecciones" data-view="lessons">Lecciones</a>
         <a class="nav__link" href="#/libre" data-view="free">Práctica libre</a>
         <a class="nav__link" href="#/progreso" data-view="progress">Progreso</a>
       </nav>
       <div class="topbar__actions">
+        <select class="select" id="layout-select" title="Distribución del teclado" aria-label="Distribución del teclado"></select>
         <button class="icon-button" id="theme-toggle" type="button" title="Cambiar tema" aria-label="Cambiar tema">
           <span aria-hidden="true">◐</span>
         </button>
@@ -36,14 +38,145 @@
     </header>
 
     <main id="main">
+      <!-- Tutorial -->
+      <section class="view" id="view-tutorial" hidden>
+        <div class="hero">
+          <h1>Cómo empezar a mecanografiar</h1>
+          <p>
+            Escribir sin mirar es una habilidad motriz: no se entiende, se entrena. Estos siete
+            pasos son todo lo que necesitas saber antes de la primera lección.
+            Estás practicando con la distribución <b id="tutorial-layout-name">—</b>; puedes
+            cambiarla arriba a la derecha.
+          </p>
+        </div>
+
+        <ol class="steps">
+          <li class="step">
+            <h2>Prepara el sitio</h2>
+            <p>La postura evita lesiones y, de paso, quita errores.</p>
+            <ul class="checklist">
+              <li>Espalda apoyada en el respaldo y pies planos en el suelo.</li>
+              <li>Codos pegados al cuerpo, formando unos 90°.</li>
+              <li>Muñecas <b>en el aire</b>, rectas: se mueven los dedos, no los brazos.</li>
+              <li>La parte de arriba de la pantalla, a la altura de los ojos y a un brazo de distancia.</li>
+              <li>Teclado plano o con poca inclinación, centrado con la barra espaciadora frente a ti.</li>
+            </ul>
+          </li>
+
+          <li class="step">
+            <h2>Coloca las manos en la fila guía</h2>
+            <p>
+              La fila guía es la posición de reposo: los ocho dedos que no son pulgares descansan
+              siempre ahí y vuelven ahí después de cada pulsación.
+            </p>
+            <div class="homerow">
+              <div class="homerow__hand">
+                <span class="homerow__label">Mano izquierda</span>
+                <span class="homerow__keys" id="tutorial-home-left"></span>
+              </div>
+              <div class="homerow__hand">
+                <span class="homerow__label">Mano derecha</span>
+                <span class="homerow__keys" id="tutorial-home-right"></span>
+              </div>
+            </div>
+            <p>
+              Busca los dos <b>relieves</b> de las teclas <kbd>F</kbd> y <kbd>J</kbd>: son la señal
+              táctil que te permite recolocar las manos sin mirar. Apoya los índices ahí, deja caer
+              el resto de dedos y los pulgares sobre la barra espaciadora.
+            </p>
+          </li>
+
+          <li class="step">
+            <h2>Cada dedo tiene su territorio</h2>
+            <p>
+              Cada tecla se pulsa siempre con el mismo dedo, y ese dedo vuelve a su tecla guía.
+              Pasa el ratón (o toca) sobre un dedo para ver de qué teclas se ocupa.
+            </p>
+            <div class="fingers-legend" id="tutorial-fingers"></div>
+            <div class="tutorial__guide">
+              <div class="hands" id="tutorial-hands"></div>
+              <div class="keyboard" id="tutorial-keyboard" aria-hidden="true"></div>
+            </div>
+            <p class="step__note">
+              Las teclas de la fila guía llevan una raya debajo. Los índices son los únicos dedos
+              que se estiran a dos columnas: <kbd>G</kbd> y <kbd>H</kbd> son suyas.
+            </p>
+          </li>
+
+          <li class="step">
+            <h2>Los pulgares solo hacen el espacio</h2>
+            <p>
+              Nada más. Lo habitual es usar siempre el mismo pulgar (el de tu mano dominante) y
+              dejar el otro apoyado. El espacio es la tecla más frecuente del texto: si la das con
+              un dedo cualquiera, pierdes la posición de las manos en cada palabra.
+            </p>
+          </li>
+
+          <li class="step">
+            <h2>Mayúsculas: Shift con la mano contraria</h2>
+            <p>
+              Para una letra de la mano izquierda, mantén <kbd>⇧</kbd> con el meñique <b>derecho</b>,
+              y al revés. Nunca con la misma mano que pulsa la letra: te obliga a torcer la muñeca y
+              a perder la fila guía. <kbd>Bloq Mayús</kbd> no se usa para escribir texto.
+            </p>
+            <p class="step__note">
+              En el teclado en pantalla verás iluminarse a la vez la letra y el Shift que toca.
+            </p>
+          </li>
+
+          <li class="step">
+            <h2>Cómo practicar</h2>
+            <ul class="checklist">
+              <li><b>No mires las manos.</b> Si hace falta, tápalas con un paño los primeros días.</li>
+              <li><b>Precisión antes que velocidad.</b> La velocidad llega sola; los errores aprendidos, no se van solos.</li>
+              <li><b>Ritmo constante.</b> Mejor lento y regular que a ráfagas: el oído te avisa cuando el ritmo se rompe.</li>
+              <li><b>10-15 minutos al día.</b> Todos los días vale mucho más que dos horas el domingo.</li>
+              <li><b>Vuelve siempre a la fila guía</b> después de cada pulsación, aunque tardes más.</li>
+              <li><b>Repite la lección</b> hasta las tres estrellas antes de pasar a la siguiente.</li>
+            </ul>
+          </li>
+
+          <li class="step">
+            <h2>Errores frecuentes</h2>
+            <ul class="checklist checklist--warn">
+              <li>Mirar el teclado en pantalla en vez del texto: úsalo solo cuando te pierdas.</li>
+              <li>Correr antes de dominar la lección: por debajo del 95 % de precisión, frena.</li>
+              <li>Golpear las teclas con fuerza; basta con rozarlas.</li>
+              <li>Apoyar las muñecas mientras escribes.</li>
+              <li>Usar siempre el mismo Shift, o esquivar el meñique con el dedo de al lado.</li>
+              <li>Mirar el teclado «solo para los números»: también entran en el temario.</li>
+            </ul>
+          </li>
+        </ol>
+
+        <div class="panel">
+          <h3>Qué velocidad esperar</h3>
+          <p>
+            Las ppm son palabras por minuto, contando cinco pulsaciones por palabra. Escribir a
+            mano son unas 20 ppm; escribir mirando el teclado con dos dedos, entre 25 y 30.
+          </p>
+          <div class="table-wrap">
+            <table class="table">
+              <thead><tr><th>ppm</th><th>Nivel</th></tr></thead>
+              <tbody>
+                <tr><td>15-25</td><td>Ya escribes sin mirar. El objetivo de los primeros bloques.</td></tr>
+                <tr><td>30-40</td><td>Soltura: escribes casi al ritmo en que piensas la frase.</td></tr>
+                <tr><td>50-60</td><td>Buen nivel profesional.</td></tr>
+                <tr><td>70+</td><td>Rápido: a partir de aquí manda la precisión, no los dedos.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="panel__actions">
+            <button class="button button--primary" id="tutorial-start" type="button">Empezar por la lección 1</button>
+          </div>
+        </div>
+      </section>
+
       <!-- Lessons -->
       <section class="view" id="view-lessons" hidden>
         <div class="hero">
           <h1>Aprende a escribir sin mirar el teclado</h1>
-          <p>
-            Treinta y una lecciones progresivas para teclado español. Empieza por la fila guía y
-            avanza hasta escribir párrafos completos con tildes, signos y números.
-          </p>
+          <p id="hero-lead"></p>
           <div class="hero__stats" id="hero-stats"></div>
           <button class="button button--primary" id="continue-button" type="button">Continuar donde lo dejé</button>
         </div>

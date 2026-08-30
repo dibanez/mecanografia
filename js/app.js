@@ -1,6 +1,20 @@
-/** Application shell: routing, lesson practice loop and progress screens. */
+/** Application shell: routing, lesson practice loop, tutorial and progress. */
 
-import { BLOCKS, LESSONS, buildExercise, getLesson, lessonsOfBlock } from './data/lessons.js';
+import {
+  FINGERS,
+  LAYOUT_LIST,
+  defaultLayoutForCourse,
+  getLayout,
+  homeKeys,
+  keysByFinger,
+} from './data/keyboard-layout.js';
+import {
+  buildExercise,
+  courseOfLesson,
+  getCourse,
+  getLesson,
+  lessonsOfBlock,
+} from './data/lessons.js';
 import { TypingEngine, ratingFor } from './engine.js';
 import { KeyboardView } from './keyboard.js';
 import { store } from './storage.js';
@@ -11,16 +25,28 @@ const SAMPLE_TEXT =
   'La mecanografía se aprende con constancia: pocos minutos cada día valen más que una tarde entera. ' +
   'Coloca los dedos sobre la fila guía, mantén la vista en la pantalla y deja que las manos recuerden el camino.';
 
+const COURSE_LEAD = {
+  es: (count) =>
+    `${count} lecciones progresivas para teclado español. Empieza por la fila guía y avanza ` +
+    'hasta escribir párrafos completos con tildes, signos y números.',
+  en: (count) =>
+    `${count} lecciones progresivas para teclado inglés. Empieza por la fila guía y avanza ` +
+    'hasta escribir párrafos completos con apóstrofos, signos y números.',
+};
+
 const app = {
   lesson: null,
   freeText: '',
   engine: null,
   keyboard: null,
+  tutorialKeyboard: null,
   input: null,
   charEls: [],
   deadPending: false,
   tickId: null,
   settings: store.getSettings(),
+  layout: null,
+  course: null,
 };
 
 /* ------------------------------------------------------------- utilities */
@@ -41,9 +67,28 @@ function applyTheme(theme) {
   app.settings = store.saveSettings({ theme });
 }
 
+/* --------------------------------------------------------------- layout */
+
+/** Switches keyboard layout, which also switches the course of lessons. */
+function applyLayout(layoutId, { rerender = true } = {}) {
+  app.layout = getLayout(layoutId);
+  app.course = getCourse(app.layout.course);
+  app.settings = store.saveSettings({ layout: app.layout.id });
+  $('#layout-select').value = app.layout.id;
+
+  app.keyboard?.setLayout(app.layout);
+  app.tutorialKeyboard?.setLayout(app.layout);
+  if (!rerender) return;
+
+  // A lesson from the previous course no longer applies to this keyboard.
+  if (app.lesson && !app.lesson.custom) location.hash = '#/lecciones';
+  else route();
+}
+
 /* -------------------------------------------------------------- routing */
 
 const VIEWS = {
+  tutorial: '#view-tutorial',
   lessons: '#view-lessons',
   practice: '#view-practice',
   free: '#view-free',
@@ -66,11 +111,21 @@ function route() {
   stopPractice();
 
   if (section === 'practica' && param) {
-    const lesson = getLesson(param);
+    // A link to a lesson of the other course switches the keyboard with it.
+    const course = courseOfLesson(param);
+    if (course && course.id !== app.course.id) {
+      applyLayout(defaultLayoutForCourse(course.id).id, { rerender: false });
+    }
+    const lesson = app.course.lessons.find((item) => item.id === param);
     if (lesson) {
       startLesson(lesson);
       return;
     }
+  }
+  if (section === 'tutorial') {
+    renderTutorial();
+    showView('tutorial');
+    return;
   }
   if (section === 'libre') {
     if (param === 'texto' && app.freeText) {
@@ -89,33 +144,110 @@ function route() {
   showView('lessons');
 }
 
+/* -------------------------------------------------------------- tutorial */
+
+function shortFingerName(id) {
+  return FINGERS[id].name.replace(' izquierdo', ' izq.').replace(' derecho', ' der.');
+}
+
+function renderTutorial() {
+  $('#tutorial-layout-name').textContent = app.layout.name;
+
+  const home = homeKeys(app.layout);
+  const render = (hand) =>
+    home
+      .filter((key) => key.finger.startsWith(hand))
+      .map(
+        (key) =>
+          `<kbd class="homerow__key${key.code === 'KeyF' || key.code === 'KeyJ' ? ' homerow__key--bump' : ''}" style="--finger-color: var(--finger-${key.finger.slice(1)})">${key.base.toUpperCase()}</kbd>`,
+      )
+      .join('');
+  $('#tutorial-home-left').innerHTML = render('l');
+  $('#tutorial-home-right').innerHTML = render('r');
+
+  const perFinger = keysByFinger(app.layout);
+  $('#tutorial-fingers').innerHTML = Object.keys(FINGERS)
+    .map((id) => {
+      const keys = id.endsWith('t') ? ['Espacio'] : perFinger.get(id) ?? [];
+      return `
+        <button class="finger-chip" type="button" data-finger="${id}">
+          <span class="finger-chip__name">${shortFingerName(id)}</span>
+          <span class="finger-chip__keys">${keys.join(' ') || '—'}</span>
+        </button>`;
+    })
+    .join('');
+
+  $('#tutorial-start').textContent = `Empezar por «${app.course.lessons[0].title}»`;
+}
+
+function spotlight(fingerId) {
+  app.tutorialKeyboard.spotlightFinger(fingerId);
+  for (const chip of document.querySelectorAll('.finger-chip')) {
+    chip.classList.toggle('is-active', chip.dataset.finger === fingerId);
+  }
+}
+
+function initTutorial() {
+  app.tutorialKeyboard = new KeyboardView(
+    $('#tutorial-keyboard'),
+    $('#tutorial-hands'),
+    app.layout,
+    { tinted: true },
+  );
+
+  const legend = $('#tutorial-fingers');
+  legend.addEventListener('pointerover', (event) => {
+    const chip = event.target.closest('.finger-chip');
+    if (chip) spotlight(chip.dataset.finger);
+  });
+  legend.addEventListener('pointerleave', () => spotlight(null));
+  legend.addEventListener('focusin', (event) => {
+    const chip = event.target.closest('.finger-chip');
+    if (chip) spotlight(chip.dataset.finger);
+  });
+  legend.addEventListener('click', (event) => {
+    const chip = event.target.closest('.finger-chip');
+    if (chip) spotlight(chip.classList.contains('is-active') ? null : chip.dataset.finger);
+  });
+
+  $('#tutorial-start').addEventListener('click', () => {
+    location.hash = `#/practica/${app.course.lessons[0].id}`;
+  });
+}
+
 /* -------------------------------------------------------------- lessons */
 
 function nextPendingLesson() {
   const state = store.getState();
-  return LESSONS.find((lesson) => (state.lessons[lesson.id]?.stars ?? 0) < 3) ?? LESSONS[0];
+  return (
+    app.course.lessons.find((lesson) => (state.lessons[lesson.id]?.stars ?? 0) < 3) ??
+    app.course.lessons[0]
+  );
 }
 
 function renderLessons() {
   const state = store.getState();
-  const done = LESSONS.filter((lesson) => state.lessons[lesson.id]).length;
-  const bestWpm = Math.max(0, ...Object.values(state.lessons).map((l) => l.bestWpm));
-  const accuracies = Object.values(state.lessons).map((l) => l.bestAccuracy);
+  const { lessons, blocks } = app.course;
+  const progressEntries = lessons.map((lesson) => state.lessons[lesson.id]).filter(Boolean);
+  const done = progressEntries.length;
+  const bestWpm = Math.max(0, ...progressEntries.map((l) => l.bestWpm));
+  const accuracies = progressEntries.map((l) => l.bestAccuracy);
   const avgAccuracy = accuracies.length
     ? Math.round((accuracies.reduce((a, b) => a + b, 0) / accuracies.length) * 10) / 10
     : 0;
 
+  $('#hero-lead').textContent = COURSE_LEAD[app.course.id](lessons.length);
   $('#hero-stats').innerHTML = `
-    <div class="hero__stat"><b>${done}/${LESSONS.length}</b><span>lecciones</span></div>
+    <div class="hero__stat"><b>${done}/${lessons.length}</b><span>lecciones</span></div>
     <div class="hero__stat"><b>${bestWpm}</b><span>mejor ppm</span></div>
     <div class="hero__stat"><b>${avgAccuracy || '—'}%</b><span>precisión media</span></div>`;
 
   const container = $('#blocks');
   container.textContent = '';
-  for (const block of BLOCKS) {
+  for (const block of blocks) {
     const section = document.createElement('section');
     section.className = 'block';
-    const lessons = lessonsOfBlock(block.id)
+    const cards = lessonsOfBlock(app.course, block.id)
       .map((lesson) => {
         const progress = state.lessons[lesson.id];
         const stars = progress?.stars ?? 0;
@@ -137,7 +269,7 @@ function renderLessons() {
         <span class="block__title">${block.title}</span>
         <span class="block__description">${block.description}</span>
       </div>
-      <div class="lesson-grid">${lessons}</div>`;
+      <div class="lesson-grid">${cards}</div>`;
     container.append(section);
   }
 
@@ -241,6 +373,7 @@ function startFreePractice(text) {
 function stopPractice() {
   clearInterval(app.tickId);
   app.tickId = null;
+  app.lesson = null;
   const dialog = $('#result-dialog');
   if (dialog.open) dialog.close();
 }
@@ -325,8 +458,8 @@ function updateMetrics() {
 }
 
 function nextLessonAfter(lessonId) {
-  const position = LESSONS.findIndex((lesson) => lesson.id === lessonId);
-  return position >= 0 ? LESSONS[position + 1] ?? null : null;
+  const position = app.course.lessons.findIndex((lesson) => lesson.id === lessonId);
+  return position >= 0 ? app.course.lessons[position + 1] ?? null : null;
 }
 
 function finishLesson() {
@@ -432,7 +565,19 @@ function renderProgress() {
 
 function init() {
   applyTheme(app.settings.theme);
-  app.keyboard = new KeyboardView($('#keyboard'), $('#hands'));
+
+  const select = $('#layout-select');
+  select.innerHTML = LAYOUT_LIST.map(
+    (layout) => `<option value="${layout.id}">${layout.name}</option>`,
+  ).join('');
+  select.addEventListener('change', () => applyLayout(select.value));
+
+  app.layout = getLayout(app.settings.layout);
+  app.course = getCourse(app.layout.course);
+  select.value = app.layout.id;
+
+  app.keyboard = new KeyboardView($('#keyboard'), $('#hands'), app.layout);
+  initTutorial();
 
   $('#theme-toggle').addEventListener('click', () => {
     applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');

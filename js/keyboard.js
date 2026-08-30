@@ -1,6 +1,6 @@
 /** Renders the on-screen keyboard and the hand guide, and highlights keys. */
 
-import { KEYBOARD_ROWS, KEY_BY_CODE, keyStepsFor } from './data/keyboard-layout.js';
+import { FINGERS, keyByCode, keyStepsFor } from './data/keyboard-layout.js';
 
 const FINGER_ORDER = {
   left: [
@@ -26,17 +26,32 @@ function keyLabel(key) {
 }
 
 export class KeyboardView {
-  constructor(keyboardEl, handsEl) {
+  /**
+   * `tinted` paints every key with the colour of the finger that owns it,
+   * which is what the tutorial uses to explain the finger assignment.
+   */
+  constructor(keyboardEl, handsEl, layout, { tinted = false } = {}) {
     this.keyboardEl = keyboardEl;
     this.handsEl = handsEl;
+    this.layout = layout;
+    this.tinted = tinted;
     this.keyEls = new Map();
     this.fingerEls = new Map();
     this.render();
   }
 
+  setLayout(layout) {
+    this.layout = layout;
+    this.render();
+  }
+
   render() {
+    this.keyEls.clear();
+    this.fingerEls.clear();
+
     this.keyboardEl.textContent = '';
-    for (const row of KEYBOARD_ROWS) {
+    this.keyboardEl.classList.toggle('keyboard--tinted', this.tinted);
+    for (const row of this.layout.rows) {
       const rowEl = document.createElement('div');
       rowEl.className = 'keyboard__row';
       for (const key of row) {
@@ -53,7 +68,9 @@ export class KeyboardView {
       this.keyboardEl.append(rowEl);
     }
 
+    if (!this.handsEl) return;
     this.handsEl.textContent = '';
+    this.handsEl.classList.toggle('hands--tinted', this.tinted);
     for (const [hand, fingers] of Object.entries(FINGER_ORDER)) {
       const handEl = document.createElement('div');
       handEl.className = `hand hand--${hand}`;
@@ -64,6 +81,7 @@ export class KeyboardView {
         el.className = 'finger';
         el.dataset.finger = finger.id;
         el.dataset.length = finger.length;
+        el.title = FINGERS[finger.id].name;
         fingersEl.append(el);
         this.fingerEls.set(finger.id, el);
       }
@@ -88,12 +106,12 @@ export class KeyboardView {
    */
   highlight(char, deadPending = false) {
     this.clearHighlights();
-    const steps = keyStepsFor(char);
+    const steps = keyStepsFor(char, this.layout);
     if (!steps) return;
 
     const step = deadPending && steps.length > 1 ? steps[1] : steps[0];
     const keyEl = this.keyEls.get(step.code);
-    const key = KEY_BY_CODE.get(step.code);
+    const key = keyByCode(step.code, this.layout);
     if (keyEl) keyEl.classList.add('is-next');
     if (key) this.fingerEls.get(key.finger)?.classList.add('is-active');
 
@@ -105,6 +123,18 @@ export class KeyboardView {
     } else if (step.modifier === 'altgr') {
       this.keyEls.get('AltRight')?.classList.add('is-modifier');
       this.fingerEls.get('rt')?.classList.add('is-active');
+    }
+  }
+
+  /** Dims every key not owned by `fingerId`; pass null to show them all. */
+  spotlightFinger(fingerId) {
+    for (const [code, el] of this.keyEls) {
+      const owner = keyByCode(code, this.layout)?.finger;
+      el.classList.toggle('is-dimmed', Boolean(fingerId) && owner !== fingerId);
+      el.classList.toggle('is-spotlit', Boolean(fingerId) && owner === fingerId);
+    }
+    for (const [id, el] of this.fingerEls) {
+      el.classList.toggle('is-active', id === fingerId);
     }
   }
 

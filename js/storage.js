@@ -1,8 +1,14 @@
 /** Local progress persistence. Everything lives in one localStorage entry. */
 
+import { DEFAULT_LAYOUT_ID } from './data/keyboard-layout.js';
+
 const STORAGE_KEY = 'mecanografia:v1';
 
-const EMPTY = { lessons: {}, sessions: [], settings: { theme: 'dark', sound: true, strict: true } };
+const EMPTY = {
+  lessons: {},
+  sessions: [],
+  settings: { theme: 'dark', sound: true, strict: true, layout: DEFAULT_LAYOUT_ID },
+};
 
 function read() {
   try {
