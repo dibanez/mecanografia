@@ -26,6 +26,11 @@ compilación ni dependencias: es HTML, CSS y JavaScript con módulos ES nativos.
   gráfica de velocidad y las teclas que más se resisten. Todo en `localStorage`,
   sin servidor ni cuentas.
 - **Práctica libre** con cualquier texto propio y **tema claro/oscuro**.
+- **Compartir**: el proyecto desde el pie, el resultado de cada lección desde el
+  diálogo de fin y el progreso global desde su pantalla. Usa la hoja nativa del
+  sistema (`navigator.share`) cuando existe y, si no, un diálogo con WhatsApp,
+  Telegram, X, Bluesky, Mastodon, Facebook, LinkedIn, correo y copiar al
+  portapapeles.
 - **Donaciones**: enlace a PayPal.me en el pie, cambiable en `index.html`
   (`.footer__donate`). Al ser un enlace saliente funciona en GitHub Pages sin
   servidor ni pasarela.
@@ -65,6 +70,15 @@ Como alternativa, en **Settings → Pages** puedes elegir *Deploy from a branch*
 (`main`, carpeta `/root`): el archivo `.nojekyll` ya está incluido para que Jekyll
 no interfiera.
 
+## Vista previa del enlace
+
+Las etiquetas Open Graph de `index.html` apuntan a `https://dibanez.github.io/mecanografia/`
+y a `og.png` con **URL absoluta**, que es lo que exigen las redes sociales: si
+mueves el sitio a otro dominio hay que cambiarlas.
+
+La tarjeta `og.png` (1200 × 630) se genera abriendo `og.html` a ese tamaño y
+guardando la captura en la raíz del repositorio.
+
 ## Analítica
 
 El contenedor de Google Tag Manager `GTM-M7VBLNGF` se carga desde `index.html`
@@ -102,6 +116,8 @@ js/engine.js                motor de escritura y cálculo de ppm/precisión
 js/keyboard.js              teclado en pantalla y guía de manos
 js/storage.js               persistencia en localStorage
 js/consent.js               aviso de cookies y modo de consentimiento
+js/share.js                 compartir en redes sociales
+og.html / og.png            tarjeta de vista previa del enlace
 js/data/lessons.js          cursos, búsquedas y generador de ejercicios
 js/data/lessons-es.js       temario del teclado español
 js/data/lessons-en.js       temario del teclado inglés

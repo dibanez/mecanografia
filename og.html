@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<!--
+  Source of og.png, the 1200x630 link preview card. To regenerate it, open this
+  file at that viewport size and save a screenshot as og.png in the repo root.
+-->
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mecanografía — tarjeta de vista previa</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0e1116;
+        --bg-sunken: #0a0d12;
+        --border: #262d38;
+        --text: #e6ebf2;
+        --text-muted: #8d99ab;
+        --accent: #ffb454;
+        --finger-5: #f472b6;
+        --finger-4: #a78bfa;
+        --finger-3: #38bdf8;
+        --finger-2: #34d399;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        width: 1200px;
+        height: 630px;
+        background: radial-gradient(120% 120% at 0% 0%, #1a2130 0%, var(--bg) 55%);
+        color: var(--text);
+        font-family: 'Outfit', system-ui, sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 34px;
+        padding: 72px;
+      }
+      .brand { display: flex; align-items: center; gap: 16px; }
+      .brand__mark {
+        width: 62px; height: 62px;
+        border-radius: 16px;
+        background: linear-gradient(140deg, var(--accent), var(--finger-5));
+        color: #14181f;
+        display: grid;
+        place-items: center;
+        font-size: 34px;
+      }
+      .brand__name { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; }
+      h1 { font-size: 74px; line-height: 1.03; letter-spacing: -0.035em; margin: 0; max-width: 15ch; }
+      p { font-size: 27px; line-height: 1.45; color: var(--text-muted); margin: 0; max-width: 40ch; }
+      .keys { display: flex; gap: 10px; }
+      .key {
+        width: 66px; height: 66px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 26px;
+        font-weight: 700;
+        color: #14181f;
+        background: var(--c);
+        position: relative;
+      }
+      .key--bump::after {
+        content: '';
+        position: absolute;
+        bottom: 11px;
+        width: 20px; height: 3px;
+        border-radius: 3px;
+        background: #14181f;
+        opacity: 0.55;
+      }
+      .foot { display: flex; align-items: baseline; gap: 22px; font-size: 22px; color: var(--text-muted); }
+      .foot b { color: var(--accent); font-size: 24px; }
+    </style>
+  </head>
+  <body>
+    <div class="brand">
+      <span class="brand__mark">⌨</span>
+      <span class="brand__name">Mecanografía</span>
+    </div>
+    <h1>Aprende a escribir sin mirar el teclado</h1>
+    <div class="keys">
+      <span class="key" style="--c: var(--finger-5)">A</span>
+      <span class="key" style="--c: var(--finger-4)">S</span>
+      <span class="key" style="--c: var(--finger-3)">D</span>
+      <span class="key key--bump" style="--c: var(--finger-2)">F</span>
+      <span class="key key--bump" style="--c: var(--finger-2)">J</span>
+      <span class="key" style="--c: var(--finger-3)">K</span>
+      <span class="key" style="--c: var(--finger-4)">L</span>
+      <span class="key" style="--c: var(--finger-5)">Ñ</span>
+    </div>
+    <p>Curso gratuito con teclado español e inglés, 31 lecciones y estadísticas.</p>
+    <div class="foot"><b>dibanez.github.io/mecanografia</b><span>gratis · sin cuentas · sin anuncios</span></div>
+  </body>
+</html>

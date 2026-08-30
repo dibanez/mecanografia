@@ -40,6 +40,20 @@
       name="description"
       content="Curso de mecanografía para teclado español e inglés: tutorial de colocación de dedos, 31 lecciones progresivas por distribución, teclado en pantalla y estadísticas de velocidad y precisión."
     />
+    <!-- Link preview. Update the absolute URLs if the site moves off GitHub Pages. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Mecanografía" />
+    <meta property="og:title" content="Mecanografía — aprende a escribir sin mirar" />
+    <meta
+      property="og:description"
+      content="Curso gratuito de mecanografía para teclado español e inglés: tutorial de colocación de dedos, 31 lecciones progresivas, teclado en pantalla y estadísticas de velocidad."
+    />
+    <meta property="og:url" content="https://dibanez.github.io/mecanografia/" />
+    <meta property="og:image" content="https://dibanez.github.io/mecanografia/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="es_ES" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -274,7 +288,10 @@
 
       <!-- Progress -->
       <section class="view" id="view-progress" hidden>
-        <h2>Tu progreso</h2>
+        <div class="view__head">
+          <h2>Tu progreso</h2>
+          <button class="button" id="share-progress" type="button">Compartir mi progreso</button>
+        </div>
         <div class="metrics metrics--wide" id="progress-summary"></div>
         <div class="panel">
           <h3>Velocidad por sesión</h3>
@@ -302,13 +319,16 @@
         </p>
         <p>Si te está sirviendo y te apetece echar una mano, puedes invitarme a un café.</p>
       </div>
-      <a
-        class="button button--primary footer__donate"
-        href="https://paypal.me/dibanez1979"
-        target="_blank"
-        rel="noopener noreferrer"
-        >Donar con PayPal</a
-      >
+      <div class="footer__actions">
+        <button class="button" id="share-project" type="button">Compartir</button>
+        <a
+          class="button button--primary footer__donate"
+          href="https://paypal.me/dibanez1979"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Donar con PayPal</a
+        >
+      </div>
       <p class="footer__legal">
         <button class="link-button" id="consent-settings" type="button">
           Preferencias de cookies
@@ -332,6 +352,17 @@
       </div>
     </section>
 
+    <!-- Share dialog (fallback when the browser has no native share sheet) -->
+    <dialog class="share" id="share-dialog">
+      <h2 id="share-title">Compartir</h2>
+      <p class="share__preview" id="share-preview"></p>
+      <div class="share__targets" id="share-targets"></div>
+      <div class="share__actions">
+        <button class="button" id="share-copy" type="button">Copiar texto y enlace</button>
+        <button class="button" id="share-close" type="button">Cerrar</button>
+      </div>
+    </dialog>
+
     <!-- Result dialog -->
     <dialog class="result" id="result-dialog">
       <h2 id="result-title">¡Lección completada!</h2>
@@ -344,6 +375,7 @@
       </div>
       <p class="result__note" id="result-note"></p>
       <div class="result__actions">
+        <button class="button" id="result-share" type="button">Compartir</button>
         <button class="button" id="result-repeat" type="button">Repetir</button>
         <button class="button button--primary" id="result-next" type="button">Siguiente lección</button>
       </div>

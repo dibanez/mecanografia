@@ -17,6 +17,7 @@ import {
 } from './data/lessons.js';
 import { TypingEngine, ratingFor } from './engine.js';
 import { KeyboardView } from './keyboard.js';
+import { initShare, openShare } from './share.js';
 import { store } from './storage.js';
 
 const $ = (selector) => document.querySelector(selector);
@@ -36,6 +37,7 @@ const COURSE_LEAD = {
 
 const app = {
   lesson: null,
+  lastResult: null,
   freeText: '',
   engine: null,
   keyboard: null,
@@ -500,9 +502,41 @@ function finishLesson() {
       ? '¡Sin un solo fallo! Puedes pasar a la siguiente lección.'
       : 'Sin errores. Repite para ganar velocidad.';
 
+  app.lastResult = { title: app.lesson.title, wpm: stats.wpm, accuracy: stats.accuracy, stars };
+
   const next = nextLessonAfter(app.lesson.id);
   $('#result-next').hidden = !next || app.lesson.custom;
   $('#result-dialog').showModal();
+}
+
+/* ----------------------------------------------------------------- share */
+
+const PROJECT_PITCH =
+  'Estoy aprendiendo mecanografía con este curso gratuito: teclado español e inglés, ' +
+  '31 lecciones y estadísticas de velocidad. #mecanografía';
+
+function shareResultText() {
+  const { title, wpm, accuracy, stars } = app.lastResult;
+  return (
+    `${'★'.repeat(stars)} He completado la lección «${title}» a ${wpm} ppm con ${accuracy} % ` +
+    'de precisión aprendiendo mecanografía. #mecanografía'
+  );
+}
+
+function shareProgressText() {
+  const state = store.getState();
+  const done = app.course.lessons.filter((lesson) => state.lessons[lesson.id]).length;
+  const sessions = state.sessions;
+  const bestWpm = Math.max(0, ...sessions.map((session) => session.wpm));
+  const avgAccuracy = sessions.length
+    ? Math.round((sessions.reduce((sum, s) => sum + s.accuracy, 0) / sessions.length) * 10) / 10
+    : 0;
+
+  if (!sessions.length) return PROJECT_PITCH;
+  return (
+    `Llevo ${done} de ${app.course.lessons.length} lecciones de mecanografía: ` +
+    `${bestWpm} ppm y ${avgAccuracy} % de precisión. #mecanografía`
+  );
 }
 
 /* -------------------------------------------------------------- progress */
@@ -622,6 +656,17 @@ function init() {
     app.freeText = text;
     if (location.hash === '#/libre/texto') startFreePractice(text);
     else location.hash = '#/libre/texto';
+  });
+
+  initShare();
+  $('#share-project').addEventListener('click', () => {
+    openShare({ title: 'Compartir el proyecto', text: PROJECT_PITCH });
+  });
+  $('#share-progress').addEventListener('click', () => {
+    openShare({ title: 'Compartir mi progreso', text: shareProgressText() });
+  });
+  $('#result-share').addEventListener('click', () => {
+    if (app.lastResult) openShare({ title: 'Compartir el resultado', text: shareResultText() });
   });
 
   $('#clear-progress').addEventListener('click', () => {
