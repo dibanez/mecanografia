@@ -79,8 +79,18 @@ En GTM, dispara las vistas de página virtuales con un activador de tipo
 *Evento personalizado* con nombre `view_change` (o con *History Change*, que
 también salta al cambiar el hash).
 
-Si añades cookies de analítica y el sitio se dirige a la UE, hará falta un aviso
-de consentimiento; GA4 admite el modo de consentimiento desde el propio GTM.
+### Consentimiento
+
+El `head` declara el **modo de consentimiento v2** con todo denegado antes de
+cargar GTM, así que en la primera visita no se guarda ninguna cookie de
+analítica. `js/consent.js` enseña el aviso, recuerda la respuesta en
+`localStorage` (`mecanografia:consent`) y envía `consent update` a `dataLayer`;
+el enlace «Preferencias de cookies» del pie reabre el aviso para poder cambiar
+de opinión.
+
+Para que GA4 lo respete, marca sus etiquetas como que requieren
+`analytics_storage` (es lo que hace el modo de consentimiento por defecto) y no
+las dispares con activadores que ignoren el estado del consentimiento.
 
 ## Estructura
 
@@ -91,6 +101,7 @@ js/app.js                   enrutado, bucle de práctica, tutorial y progreso
 js/engine.js                motor de escritura y cálculo de ppm/precisión
 js/keyboard.js              teclado en pantalla y guía de manos
 js/storage.js               persistencia en localStorage
+js/consent.js               aviso de cookies y modo de consentimiento
 js/data/lessons.js          cursos, búsquedas y generador de ejercicios
 js/data/lessons-es.js       temario del teclado español
 js/data/lessons-en.js       temario del teclado inglés

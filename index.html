@@ -3,6 +3,24 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Google Consent Mode v2 defaults: nothing is stored until accepted -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        personalization_storage: 'denied',
+        functionality_storage: 'granted',
+        security_storage: 'granted',
+        wait_for_update: 500,
+      });
+    </script>
+
     <!-- Google Tag Manager -->
     <script>
       (function (w, d, s, l, i) {
@@ -291,7 +309,28 @@
         rel="noopener noreferrer"
         >Donar con PayPal</a
       >
+      <p class="footer__legal">
+        <button class="link-button" id="consent-settings" type="button">
+          Preferencias de cookies
+        </button>
+      </p>
     </footer>
+
+    <!-- Cookie banner -->
+    <section class="consent" id="consent-banner" role="dialog" aria-label="Aviso de cookies" hidden>
+      <div class="consent__text">
+        <h2>Cookies de analítica</h2>
+        <p>
+          Uso Google Analytics (a través de Tag Manager) solo para saber qué lecciones se usan y
+          mejorar el temario. No hay publicidad ni perfilado, y tu progreso se sigue guardando
+          únicamente en tu navegador. Hasta que decidas, no se guarda ninguna cookie de analítica.
+        </p>
+      </div>
+      <div class="consent__actions">
+        <button class="button" type="button" data-consent="denied">Rechazar</button>
+        <button class="button button--primary" type="button" data-consent="granted">Aceptar</button>
+      </div>
+    </section>
 
     <!-- Result dialog -->
     <dialog class="result" id="result-dialog">
@@ -310,6 +349,7 @@
       </div>
     </dialog>
 
+    <script type="module" src="js/consent.js"></script>
     <script type="module" src="js/app.js"></script>
   </body>
 </html>
