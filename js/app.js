@@ -102,6 +102,13 @@ function showView(name) {
   for (const link of document.querySelectorAll('.nav__link')) {
     link.classList.toggle('is-active', link.dataset.view === name);
   }
+  // The hash router never reloads the page, so tell the tag manager about it.
+  window.dataLayer?.push({
+    event: 'view_change',
+    view: name,
+    layout: app.layout?.id,
+    path: location.hash || '#/lecciones',
+  });
 }
 
 function route() {

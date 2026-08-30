@@ -26,6 +26,9 @@ compilación ni dependencias: es HTML, CSS y JavaScript con módulos ES nativos.
   gráfica de velocidad y las teclas que más se resisten. Todo en `localStorage`,
   sin servidor ni cuentas.
 - **Práctica libre** con cualquier texto propio y **tema claro/oscuro**.
+- **Donaciones**: enlace a PayPal.me en el pie, cambiable en `index.html`
+  (`.footer__donate`). Al ser un enlace saliente funciona en GitHub Pages sin
+  servidor ni pasarela.
 
 ## Cómo se usa
 
@@ -61,6 +64,23 @@ python3 -m http.server 8000
 Como alternativa, en **Settings → Pages** puedes elegir *Deploy from a branch*
 (`main`, carpeta `/root`): el archivo `.nojekyll` ya está incluido para que Jekyll
 no interfiera.
+
+## Analítica
+
+El contenedor de Google Tag Manager `GTM-M7VBLNGF` se carga desde `index.html`
+(script en el `head` y `noscript` al principio del `body`). Como el enrutado va
+por hash y no recarga la página, `showView()` empuja un evento a `dataLayer`:
+
+```js
+{ event: 'view_change', view: 'lessons', layout: 'es', path: '#/lecciones' }
+```
+
+En GTM, dispara las vistas de página virtuales con un activador de tipo
+*Evento personalizado* con nombre `view_change` (o con *History Change*, que
+también salta al cambiar el hash).
+
+Si añades cookies de analítica y el sitio se dirige a la UE, hará falta un aviso
+de consentimiento; GA4 admite el modo de consentimiento desde el propio GTM.
 
 ## Estructura
 

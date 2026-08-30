@@ -3,6 +3,20 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Google Tag Manager -->
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', 'GTM-M7VBLNGF');
+    </script>
+    <!-- End Google Tag Manager -->
     <title>Mecanografía — aprende a escribir sin mirar</title>
     <meta
       name="description"
@@ -18,6 +32,17 @@
     <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-M7VBLNGF"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
     <header class="topbar">
       <a class="brand" href="#/lecciones">
         <span class="brand__mark">⌨</span>
@@ -250,6 +275,23 @@
         </div>
       </section>
     </main>
+
+    <footer class="footer">
+      <div class="footer__text">
+        <p>
+          <b>Mecanografía</b> es un proyecto gratuito y de código abierto: sin cuentas, sin
+          anuncios y con tu progreso guardado solo en tu navegador.
+        </p>
+        <p>Si te está sirviendo y te apetece echar una mano, puedes invitarme a un café.</p>
+      </div>
+      <a
+        class="button button--primary footer__donate"
+        href="https://paypal.me/dibanez1979"
+        target="_blank"
+        rel="noopener noreferrer"
+        >Donar con PayPal</a
+      >
+    </footer>
 
     <!-- Result dialog -->
     <dialog class="result" id="result-dialog">
