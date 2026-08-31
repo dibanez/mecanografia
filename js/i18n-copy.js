@@ -28,10 +28,35 @@ export const COPY = {
     /* ------------------------------------------------------------ tutorial */
     'tutorial.title': 'Cómo empezar a mecanografiar',
     'tutorial.intro':
-      'Escribir sin mirar es una habilidad motriz: no se entiende, se entrena. Estos siete pasos ' +
-      'son todo lo que necesitas saber antes de la primera lección. Estás practicando con la ' +
-      'distribución <b id="tutorial-layout-name">—</b> sobre un teclado <b id="tutorial-form-name">—</b>; ' +
-      'puedes cambiar ambas cosas en Ajustes.',
+      'Escribir sin mirar es una habilidad motriz: no se entiende, se entrena. Estos ocho pasos ' +
+      'son todo lo que necesitas saber antes de la primera lección.',
+
+    'tutorial.setup.title': 'Dile qué teclado tienes',
+    'tutorial.setup.lead':
+      'El teclado en pantalla dibuja la distribución que elijas, no la que tenga puesta tu ' +
+      'ordenador. Si no coinciden, te enseñará teclas que no están donde dice. Se configura en el ' +
+      'botón <b>⚙</b> de arriba a la derecha y se recuerda en este navegador.',
+    'tutorial.setup.layout':
+      '<b>Distribución</b>: qué carácter da cada tecla. Tiene que ser la que tengas en el sistema ' +
+      'operativo, que no siempre es la que viene serigrafiada. Para salir de dudas, pulsa la tecla ' +
+      'a la derecha de la <kbd>L</kbd>: si sale <kbd>ñ</kbd>, es la española.',
+    'tutorial.setup.form':
+      '<b>Tipo de teclado</b>: solo cambia el dibujo — completo, portátil, Mac, partido, ' +
+      'ortolineal… Elige el que se parezca al tuyo. En los partidos por columnas y en los Mac ' +
+      'cambia además qué dedo se ocupa de cada tecla.',
+    'tutorial.setup.language':
+      '<b>Idioma</b>: el de los textos de la página, independiente del teclado. Puedes practicar ' +
+      'el teclado español con la web en inglés. Cada idioma tiene su propia dirección, así que el ' +
+      'enlace que compartas abre en el idioma en el que estabas.',
+    'tutorial.setup.course':
+      'Las lecciones salen de las dos cosas, y en este orden: primero de lo que tu teclado puede ' +
+      'escribir y después del idioma de la página. En un teclado español caben los dos temarios, ' +
+      'así que manda el idioma; en uno inglés sale siempre el temario inglés, porque el español ' +
+      'está lleno de ñ y tildes que ese teclado no tiene.',
+    'tutorial.setup.state':
+      'Ahora mismo: distribución <b>{layout}</b>, dibujada como <b>{form}</b>, y la página en ' +
+      '<b>{language}</b>.',
+    'tutorial.setup.open': 'Abrir los ajustes',
 
     'tutorial.step1.title': 'Prepara el sitio',
     'tutorial.step1.lead': 'La postura evita lesiones y, de paso, quita errores.',
@@ -250,10 +275,35 @@ export const COPY = {
     /* ------------------------------------------------------------ tutorial */
     'tutorial.title': 'How to start touch typing',
     'tutorial.intro':
-      'Typing without looking is a motor skill: you do not understand it, you train it. These seven ' +
-      'steps are everything you need to know before the first lesson. You are practising with the ' +
-      '<b id="tutorial-layout-name">—</b> layout on a <b id="tutorial-form-name">—</b> keyboard; you ' +
-      'can change both in Settings.',
+      'Typing without looking is a motor skill: you do not understand it, you train it. These ' +
+      'eight steps are everything you need to know before the first lesson.',
+
+    'tutorial.setup.title': 'Tell it which keyboard you have',
+    'tutorial.setup.lead':
+      'The on-screen keyboard draws the layout you pick, not the one your computer is set to. If ' +
+      'they disagree, it will teach you keys that are somewhere else. You set it in the <b>⚙</b> ' +
+      'button at the top right, and it is remembered in this browser.',
+    'tutorial.setup.layout':
+      '<b>Layout</b>: which character each key types. It has to be the one your operating system ' +
+      'is set to, which is not always the one printed on the keys. To settle it, press the key to ' +
+      'the right of <kbd>L</kbd>: if you get <kbd>ñ</kbd>, it is the Spanish one.',
+    'tutorial.setup.form':
+      '<b>Keyboard type</b>: only changes the drawing — full size, laptop, Mac, split, ' +
+      'ortholinear… Pick the one that looks like yours. On columnar split and Apple boards it ' +
+      'also changes which finger owns each key.',
+    'tutorial.setup.language':
+      '<b>Language</b>: the one the page is written in, independent from the keyboard. You can ' +
+      'practise the Spanish keyboard with the site in English. Each language has an address of ' +
+      'its own, so a link you share opens in the language you were using.',
+    'tutorial.setup.course':
+      'The lessons come from both, in this order: first from what your keyboard can type, then ' +
+      'from the language of the page. A Spanish keyboard fits both courses, so the language ' +
+      'decides; an English one always gets the English course, because the Spanish one is full of ' +
+      'ñ and accents that keyboard does not have.',
+    'tutorial.setup.state':
+      'Right now: the <b>{layout}</b> layout, drawn as <b>{form}</b>, with the page in ' +
+      '<b>{language}</b>.',
+    'tutorial.setup.open': 'Open the settings',
 
     'tutorial.step1.title': 'Set up your desk',
     'tutorial.step1.lead': 'Good posture prevents injuries and, along the way, removes mistakes.',

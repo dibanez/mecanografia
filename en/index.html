@@ -117,10 +117,25 @@
       <section class="view" id="view-tutorial" hidden>
         <div class="hero">
           <h1 data-i18n="tutorial.title">How to start touch typing</h1>
-          <p data-i18n-html="tutorial.intro">Typing without looking is a motor skill: you do not understand it, you train it. These seven steps are everything you need to know before the first lesson. You are practising with the <b id="tutorial-layout-name">—</b> layout on a <b id="tutorial-form-name">—</b> keyboard; you can change both in Settings.</p>
+          <p data-i18n-html="tutorial.intro">Typing without looking is a motor skill: you do not understand it, you train it. These eight steps are everything you need to know before the first lesson.</p>
         </div>
 
         <ol class="steps">
+          <li class="step">
+            <h2 data-i18n="tutorial.setup.title">Tell it which keyboard you have</h2>
+            <p data-i18n-html="tutorial.setup.lead">The on-screen keyboard draws the layout you pick, not the one your computer is set to. If they disagree, it will teach you keys that are somewhere else. You set it in the <b>⚙</b> button at the top right, and it is remembered in this browser.</p>
+            <ul class="checklist checklist--plain">
+              <li data-i18n-html="tutorial.setup.layout"><b>Layout</b>: which character each key types. It has to be the one your operating system is set to, which is not always the one printed on the keys. To settle it, press the key to the right of <kbd>L</kbd>: if you get <kbd>ñ</kbd>, it is the Spanish one.</li>
+              <li data-i18n-html="tutorial.setup.form"><b>Keyboard type</b>: only changes the drawing — full size, laptop, Mac, split, ortholinear… Pick the one that looks like yours. On columnar split and Apple boards it also changes which finger owns each key.</li>
+              <li data-i18n-html="tutorial.setup.language"><b>Language</b>: the one the page is written in, independent from the keyboard. You can practise the Spanish keyboard with the site in English. Each language has an address of its own, so a link you share opens in the language you were using.</li>
+            </ul>
+            <p class="step__note" data-i18n-html="tutorial.setup.course">The lessons come from both, in this order: first from what your keyboard can type, then from the language of the page. A Spanish keyboard fits both courses, so the language decides; an English one always gets the English course, because the Spanish one is full of ñ and accents that keyboard does not have.</p>
+            <div class="setup-now">
+              <p class="setup-now__state" id="tutorial-settings-state"></p>
+              <button class="button" id="tutorial-settings" type="button" data-i18n="tutorial.setup.open">Open the settings</button>
+            </div>
+          </li>
+
           <li class="step">
             <h2 data-i18n="tutorial.step1.title">Set up your desk</h2>
             <p data-i18n="tutorial.step1.lead">Good posture prevents injuries and, along the way, removes mistakes.</p>

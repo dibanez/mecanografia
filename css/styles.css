@@ -516,6 +516,20 @@ textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 @media (max-width: 640px) { .language-offer { display: none; } }
 
 /* -------------------------------------------------------------- tutorial */
+.setup-now {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-sunken);
+}
+.setup-now__state { margin: 0; font-size: 0.9rem; }
+.setup-now__state b { color: var(--text); }
 .steps { list-style: none; counter-reset: step; margin: 0 0 1.5rem; padding: 0; }
 .step {
   counter-increment: step;
@@ -561,6 +575,8 @@ textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 }
 .checklist li::before { content: '✓'; position: absolute; left: 0; color: var(--ok); font-weight: 700; }
 .checklist--warn li::before { content: '✗'; color: var(--error); }
+/* Not advice to tick off, but the three things there are to choose. */
+.checklist--plain li::before { content: '•'; color: var(--accent); }
 .checklist b { color: var(--text); }
 
 .homerow { display: flex; gap: 1.6rem; flex-wrap: wrap; margin: 0 0 1rem; }

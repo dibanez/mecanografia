@@ -117,10 +117,25 @@
       <section class="view" id="view-tutorial" hidden>
         <div class="hero">
           <h1 data-i18n="tutorial.title">Cómo empezar a mecanografiar</h1>
-          <p data-i18n-html="tutorial.intro">Escribir sin mirar es una habilidad motriz: no se entiende, se entrena. Estos siete pasos son todo lo que necesitas saber antes de la primera lección. Estás practicando con la distribución <b id="tutorial-layout-name">—</b> sobre un teclado <b id="tutorial-form-name">—</b>; puedes cambiar ambas cosas en Ajustes.</p>
+          <p data-i18n-html="tutorial.intro">Escribir sin mirar es una habilidad motriz: no se entiende, se entrena. Estos ocho pasos son todo lo que necesitas saber antes de la primera lección.</p>
         </div>
 
         <ol class="steps">
+          <li class="step">
+            <h2 data-i18n="tutorial.setup.title">Dile qué teclado tienes</h2>
+            <p data-i18n-html="tutorial.setup.lead">El teclado en pantalla dibuja la distribución que elijas, no la que tenga puesta tu ordenador. Si no coinciden, te enseñará teclas que no están donde dice. Se configura en el botón <b>⚙</b> de arriba a la derecha y se recuerda en este navegador.</p>
+            <ul class="checklist checklist--plain">
+              <li data-i18n-html="tutorial.setup.layout"><b>Distribución</b>: qué carácter da cada tecla. Tiene que ser la que tengas en el sistema operativo, que no siempre es la que viene serigrafiada. Para salir de dudas, pulsa la tecla a la derecha de la <kbd>L</kbd>: si sale <kbd>ñ</kbd>, es la española.</li>
+              <li data-i18n-html="tutorial.setup.form"><b>Tipo de teclado</b>: solo cambia el dibujo — completo, portátil, Mac, partido, ortolineal… Elige el que se parezca al tuyo. En los partidos por columnas y en los Mac cambia además qué dedo se ocupa de cada tecla.</li>
+              <li data-i18n-html="tutorial.setup.language"><b>Idioma</b>: el de los textos de la página, independiente del teclado. Puedes practicar el teclado español con la web en inglés. Cada idioma tiene su propia dirección, así que el enlace que compartas abre en el idioma en el que estabas.</li>
+            </ul>
+            <p class="step__note" data-i18n-html="tutorial.setup.course">Las lecciones salen de las dos cosas, y en este orden: primero de lo que tu teclado puede escribir y después del idioma de la página. En un teclado español caben los dos temarios, así que manda el idioma; en uno inglés sale siempre el temario inglés, porque el español está lleno de ñ y tildes que ese teclado no tiene.</p>
+            <div class="setup-now">
+              <p class="setup-now__state" id="tutorial-settings-state"></p>
+              <button class="button" id="tutorial-settings" type="button" data-i18n="tutorial.setup.open">Abrir los ajustes</button>
+            </div>
+          </li>
+
           <li class="step">
             <h2 data-i18n="tutorial.step1.title">Prepara el sitio</h2>
             <p data-i18n="tutorial.step1.lead">La postura evita lesiones y, de paso, quita errores.</p>

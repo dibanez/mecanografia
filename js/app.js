@@ -273,8 +273,11 @@ function shortFingerName(id) {
 }
 
 function renderTutorial() {
-  $('#tutorial-layout-name').textContent = app.layout.name;
-  $('#tutorial-form-name').textContent = t(`form.${app.form.id}`).toLowerCase();
+  $('#tutorial-settings-state').innerHTML = t('tutorial.setup.state', {
+    layout: app.layout.name,
+    form: t(`form.${app.form.id}`),
+    language: LANGUAGES.find(({ id }) => id === getLanguage()).name,
+  });
 
   const home = homeKeys(app.keyboard);
   const render = (hand) =>
@@ -338,6 +341,9 @@ function initTutorial() {
   $('#tutorial-start').addEventListener('click', () => {
     location.hash = `${t('route.practice')}/${app.course.lessons[0].id}`;
   });
+
+  // The step that explains the settings opens them, rather than pointing at ⚙.
+  $('#tutorial-settings').addEventListener('click', openSettings);
 }
 
 /* -------------------------------------------------------------- lessons */
@@ -748,6 +754,14 @@ function fillSelects() {
   );
 }
 
+/** Opens the settings, building the preview keyboard the first time. */
+function openSettings() {
+  if (!app.settingsView) {
+    app.settingsView = new KeyboardView($('#settings-keyboard'), null, app.keyboard, { tinted: true });
+  }
+  $('#settings-dialog').showModal();
+}
+
 function initSettings() {
   const dialog = $('#settings-dialog');
   fillSelects();
@@ -755,12 +769,7 @@ function initSettings() {
   $('#setting-keyboard').checked = app.settings.showKeyboard;
   $('#setting-hands').checked = app.settings.showHands;
 
-  $('#settings-open').addEventListener('click', () => {
-    if (!app.settingsView) {
-      app.settingsView = new KeyboardView($('#settings-keyboard'), null, app.keyboard, { tinted: true });
-    }
-    dialog.showModal();
-  });
+  $('#settings-open').addEventListener('click', openSettings);
   $('#settings-close').addEventListener('click', () => dialog.close());
   dialog.addEventListener('close', () => app.input?.focus());
 
