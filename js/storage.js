@@ -1,13 +1,24 @@
 /** Local progress persistence. Everything lives in one localStorage entry. */
 
 import { DEFAULT_LAYOUT_ID } from './data/keyboard-layout.js';
+import { DEFAULT_FORM_ID } from './data/keyboard-forms.js';
 
 const STORAGE_KEY = 'mecanografia:v1';
 
 const EMPTY = {
   lessons: {},
   sessions: [],
-  settings: { theme: 'dark', sound: true, strict: true, layout: DEFAULT_LAYOUT_ID },
+  settings: {
+    theme: 'dark',
+    sound: true,
+    strict: true,
+    layout: DEFAULT_LAYOUT_ID,
+    form: DEFAULT_FORM_ID,
+    // Null until the visitor chooses: the browser language decides the first time.
+    language: null,
+    showKeyboard: true,
+    showHands: true,
+  },
 };
 
 function read() {

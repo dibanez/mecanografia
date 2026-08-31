@@ -281,18 +281,41 @@ textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 @media (min-width: 900px) { .guide { grid-template-columns: 210px minmax(0, 1fr); align-items: center; } }
 
 .keyboard {
+  --key-unit: 40px;
   display: flex;
-  flex-direction: column;
-  gap: 5px;
+  align-items: flex-start;
+  gap: 16px;
   background: var(--bg-elevated);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 10px;
   overflow-x: auto;
 }
-.keyboard__row { display: flex; gap: 5px; min-width: 660px; }
+.keyboard[hidden], .hands[hidden] { display: none; }
+
+.keyboard__section { flex: 0 0 auto; display: flex; flex-direction: column; }
+.keyboard__lines { display: flex; flex-direction: column; gap: 5px; }
+.keyboard__row { display: flex; gap: 5px; }
+.keyboard__column { display: flex; flex-direction: column; gap: 5px; }
+
+/* Columnar boards stagger each column by the length of its finger. */
+.keyboard__section--columns .keyboard__lines { flex-direction: row; gap: 5px; align-items: flex-start; }
+.keyboard__section--columns .keyboard__column {
+  transform: translateY(calc(var(--offset, 0) * var(--key-unit)));
+}
+/* Columns are shifted with a transform, so the cluster clears the deepest one. */
+.keyboard__thumbs { display: flex; gap: 5px; margin-top: calc(var(--key-unit) * 0.45); }
+.keyboard__thumbs .key { font-size: 0.6rem; }
+.keyboard__thumbs--left { justify-content: flex-end; transform: rotate(7deg); transform-origin: top right; }
+.keyboard__thumbs--right { justify-content: flex-start; transform: rotate(-7deg); transform-origin: top left; }
+
+/* Two-piece boards: a wider gap and a hint of tenting. */
+.keyboard--split { gap: 34px; padding: 18px 14px; }
+.keyboard--split .keyboard__section { transform-origin: bottom center; }
+.keyboard--split .keyboard__section[data-section='left'] { transform: rotate(-2.5deg); }
+.keyboard--split .keyboard__section[data-section='right'] { transform: rotate(2.5deg); }
+
 .key {
-  --key-unit: 40px;
   flex: 0 0 auto;
   width: calc(var(--key-unit) * var(--w, 1));
   height: var(--key-unit);
@@ -308,9 +331,19 @@ textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
   display: grid;
   place-items: center;
   position: relative;
+  overflow: hidden;
+  padding: 0 2px;
   transition: background 0.08s ease, color 0.08s ease, transform 0.08s ease;
 }
-@media (max-width: 700px) { .key { --key-unit: 32px; font-size: 0.62rem; } .keyboard__row { min-width: 540px; } }
+.key--spacer { visibility: hidden; }
+/* Laptop and Apple boards stack ↑ and ↓ in the height of a single key. */
+.key-stack { flex: 0 0 auto; display: flex; flex-direction: column; gap: 2px; }
+.key--half { height: calc((var(--key-unit) - 2px) / 2); font-size: 0.5rem; border-radius: 5px; }
+.key--glyph { font-family: var(--font-ui); font-size: 0.95rem; }
+.key--half.key--glyph { font-size: 0.7rem; }
+.key--half.key--home::after { display: none; }
+.key--layer { border-style: dashed; }
+@media (max-width: 700px) { .keyboard { --key-unit: 32px; } .key { font-size: 0.62rem; } }
 
 .key--home::after {
   content: '';
@@ -333,6 +366,13 @@ textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 .key.is-modifier { background: color-mix(in srgb, var(--finger-color, var(--accent)) 35%, var(--bg-sunken)); color: var(--text); }
 .key.is-pressed { transform: translateY(2px); background: color-mix(in srgb, var(--text) 18%, var(--bg-sunken)); }
 .key.is-error { background: color-mix(in srgb, var(--error) 60%, var(--bg-sunken)); color: #fff; }
+/* The character is not on a drawn key: it lives behind the layer key. */
+.key.is-layer {
+  border-style: dashed;
+  border-color: var(--accent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 18%, var(--bg-sunken));
+}
 
 .hands { display: flex; gap: 1.1rem; justify-content: center; }
 .hand { display: flex; flex-direction: column; align-items: center; gap: 4px; }
@@ -407,6 +447,42 @@ textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
+}
+
+/* ------------------------------------------------------------- settings */
+.settings {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  padding: 1.6rem;
+  max-width: 560px;
+  width: calc(100vw - 2rem);
+}
+.settings::backdrop { background: rgb(4 6 10 / 65%); backdrop-filter: blur(3px); }
+.settings h2 { margin-bottom: 1rem; }
+
+.field { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.5rem; }
+.field__label { font-size: 0.92rem; font-weight: 600; }
+.field .select { min-width: 220px; }
+.field__hint { font-size: 0.8rem; color: var(--text-muted); margin: 0 0 1.1rem; line-height: 1.45; }
+.field__hint--warn { border-left: 2px solid var(--accent); padding-left: 0.7rem; }
+
+.settings__preview { margin-bottom: 1.2rem; }
+.settings__preview .keyboard { --key-unit: 26px; padding: 10px; gap: 12px; }
+.settings__preview .keyboard--split { gap: 22px; padding: 14px 10px; }
+.settings__preview .key { font-size: 0.6rem; }
+
+.settings__group { border: 1px solid var(--border); border-radius: 10px; padding: 0.8rem 1rem; margin: 0 0 1.2rem; }
+.settings__group legend { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); padding: 0 0.4rem; }
+.check { display: flex; align-items: center; gap: 0.6rem; font-size: 0.9rem; margin: 0.3rem 0; cursor: pointer; }
+.check input { accent-color: var(--accent); width: 16px; height: 16px; }
+.settings__actions { display: flex; justify-content: flex-end; }
+
+@media (max-width: 560px) {
+  .field { flex-direction: column; align-items: stretch; gap: 0.35rem; }
+  .field .select { min-width: 0; width: 100%; }
 }
 
 /* --------------------------------------------------------------- select */

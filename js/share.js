@@ -5,6 +5,8 @@
  * falls back to a dialog with one link per network plus copy to clipboard.
  */
 
+import { t } from './i18n.js';
+
 const enc = encodeURIComponent;
 
 /** Canonical page URL, without the hash route of the current view. */
@@ -54,7 +56,7 @@ const TARGETS = [
   },
   {
     id: 'email',
-    name: 'Correo',
+    nameKey: 'share.email',
     href: (text, url) => `mailto:?subject=${enc('Mecanografía')}&body=${enc(`${text}\n\n${url}`)}`,
   },
 ];
@@ -80,15 +82,15 @@ function openDialog(title, text, url) {
   dialog.querySelector('#share-preview').textContent = `${text} ${url}`;
   dialog.querySelector('#share-targets').innerHTML = TARGETS.map(
     (target) =>
-      `<a class="share__target" href="${target.href(text, url)}" target="_blank" rel="noopener noreferrer">${target.name}</a>`,
+      `<a class="share__target" href="${target.href(text, url)}" target="_blank" rel="noopener noreferrer">${target.nameKey ? t(target.nameKey) : target.name}</a>`,
   ).join('');
 
   const copyButton = dialog.querySelector('#share-copy');
-  copyButton.textContent = 'Copiar texto y enlace';
+  copyButton.textContent = t('share.copy');
   copyButton.onclick = async () => {
     copyButton.textContent = (await copyToClipboard(`${text} ${url}`))
-      ? '¡Copiado!'
-      : 'No se pudo copiar';
+      ? t('share.copied')
+      : t('share.copyFailed');
   };
 
   dialog.showModal();
@@ -98,7 +100,7 @@ function openDialog(title, text, url) {
  * Shares `text` pointing at `url`. Returns once the native sheet closes or the
  * fallback dialog is open. Must be called from a user gesture.
  */
-export async function openShare({ title = 'Compartir', text, url = shareUrl() }) {
+export async function openShare({ title = t('share.title'), text, url = shareUrl() }) {
   window.dataLayer?.push({ event: 'share', share_kind: title });
 
   if (navigator.share) {

@@ -81,14 +81,30 @@
         <span class="brand__name">Mecanografía</span>
       </a>
       <nav class="nav">
-        <a class="nav__link" href="#/tutorial" data-view="tutorial">Tutorial</a>
-        <a class="nav__link" href="#/lecciones" data-view="lessons">Lecciones</a>
-        <a class="nav__link" href="#/libre" data-view="free">Práctica libre</a>
-        <a class="nav__link" href="#/progreso" data-view="progress">Progreso</a>
+        <a class="nav__link" href="#/tutorial" data-view="tutorial" data-i18n="nav.tutorial">Tutorial</a>
+        <a class="nav__link" href="#/lecciones" data-view="lessons" data-i18n="nav.lessons">Lecciones</a>
+        <a class="nav__link" href="#/libre" data-view="free" data-i18n="nav.free">Práctica libre</a>
+        <a class="nav__link" href="#/progreso" data-view="progress" data-i18n="nav.progress">Progreso</a>
       </nav>
       <div class="topbar__actions">
-        <select class="select" id="layout-select" title="Distribución del teclado" aria-label="Distribución del teclado"></select>
-        <button class="icon-button" id="theme-toggle" type="button" title="Cambiar tema" aria-label="Cambiar tema">
+        <button
+          class="icon-button"
+          id="settings-open"
+          type="button"
+          title="Ajustes"
+          aria-label="Ajustes"
+          data-i18n-attr="title:topbar.settings, aria-label:topbar.settings"
+        >
+          <span aria-hidden="true">⚙</span>
+        </button>
+        <button
+          class="icon-button"
+          id="theme-toggle"
+          type="button"
+          title="Cambiar tema"
+          aria-label="Cambiar tema"
+          data-i18n-attr="title:topbar.theme, aria-label:topbar.theme"
+        >
           <span aria-hidden="true">◐</span>
         </button>
       </div>
@@ -98,133 +114,107 @@
       <!-- Tutorial -->
       <section class="view" id="view-tutorial" hidden>
         <div class="hero">
-          <h1>Cómo empezar a mecanografiar</h1>
-          <p>
-            Escribir sin mirar es una habilidad motriz: no se entiende, se entrena. Estos siete
-            pasos son todo lo que necesitas saber antes de la primera lección.
-            Estás practicando con la distribución <b id="tutorial-layout-name">—</b>; puedes
-            cambiarla arriba a la derecha.
-          </p>
+          <h1 data-i18n="tutorial.title">Cómo empezar a mecanografiar</h1>
+          <p data-i18n-html="tutorial.intro"></p>
         </div>
 
         <ol class="steps">
           <li class="step">
-            <h2>Prepara el sitio</h2>
-            <p>La postura evita lesiones y, de paso, quita errores.</p>
+            <h2 data-i18n="tutorial.step1.title">Prepara el sitio</h2>
+            <p data-i18n="tutorial.step1.lead"></p>
             <ul class="checklist">
-              <li>Espalda apoyada en el respaldo y pies planos en el suelo.</li>
-              <li>Codos pegados al cuerpo, formando unos 90°.</li>
-              <li>Muñecas <b>en el aire</b>, rectas: se mueven los dedos, no los brazos.</li>
-              <li>La parte de arriba de la pantalla, a la altura de los ojos y a un brazo de distancia.</li>
-              <li>Teclado plano o con poca inclinación, centrado con la barra espaciadora frente a ti.</li>
+              <li data-i18n-html="tutorial.step1.item1"></li>
+              <li data-i18n-html="tutorial.step1.item2"></li>
+              <li data-i18n-html="tutorial.step1.item3"></li>
+              <li data-i18n-html="tutorial.step1.item4"></li>
+              <li data-i18n-html="tutorial.step1.item5"></li>
             </ul>
           </li>
 
           <li class="step">
-            <h2>Coloca las manos en la fila guía</h2>
-            <p>
-              La fila guía es la posición de reposo: los ocho dedos que no son pulgares descansan
-              siempre ahí y vuelven ahí después de cada pulsación.
-            </p>
+            <h2 data-i18n="tutorial.step2.title">Coloca las manos en la fila guía</h2>
+            <p data-i18n="tutorial.step2.lead"></p>
             <div class="homerow">
               <div class="homerow__hand">
-                <span class="homerow__label">Mano izquierda</span>
+                <span class="homerow__label" data-i18n="tutorial.step2.left"></span>
                 <span class="homerow__keys" id="tutorial-home-left"></span>
               </div>
               <div class="homerow__hand">
-                <span class="homerow__label">Mano derecha</span>
+                <span class="homerow__label" data-i18n="tutorial.step2.right"></span>
                 <span class="homerow__keys" id="tutorial-home-right"></span>
               </div>
             </div>
-            <p>
-              Busca los dos <b>relieves</b> de las teclas <kbd>F</kbd> y <kbd>J</kbd>: son la señal
-              táctil que te permite recolocar las manos sin mirar. Apoya los índices ahí, deja caer
-              el resto de dedos y los pulgares sobre la barra espaciadora.
-            </p>
+            <p data-i18n-html="tutorial.step2.bumps"></p>
           </li>
 
           <li class="step">
-            <h2>Cada dedo tiene su territorio</h2>
-            <p>
-              Cada tecla se pulsa siempre con el mismo dedo, y ese dedo vuelve a su tecla guía.
-              Pasa el ratón (o toca) sobre un dedo para ver de qué teclas se ocupa.
-            </p>
+            <h2 data-i18n="tutorial.step3.title">Cada dedo tiene su territorio</h2>
+            <p data-i18n="tutorial.step3.lead"></p>
             <div class="fingers-legend" id="tutorial-fingers"></div>
             <div class="tutorial__guide">
               <div class="hands" id="tutorial-hands"></div>
               <div class="keyboard" id="tutorial-keyboard" aria-hidden="true"></div>
             </div>
-            <p class="step__note">
-              Las teclas de la fila guía llevan una raya debajo. Los índices son los únicos dedos
-              que se estiran a dos columnas: <kbd>G</kbd> y <kbd>H</kbd> son suyas.
-            </p>
+            <p class="step__note" data-i18n-html="tutorial.step3.note"></p>
           </li>
 
           <li class="step">
-            <h2>Los pulgares solo hacen el espacio</h2>
-            <p>
-              Nada más. Lo habitual es usar siempre el mismo pulgar (el de tu mano dominante) y
-              dejar el otro apoyado. El espacio es la tecla más frecuente del texto: si la das con
-              un dedo cualquiera, pierdes la posición de las manos en cada palabra.
-            </p>
+            <h2 data-i18n="tutorial.step4.title">Los pulgares solo hacen el espacio</h2>
+            <p data-i18n-html="tutorial.step4.body"></p>
           </li>
 
           <li class="step">
-            <h2>Mayúsculas: Shift con la mano contraria</h2>
-            <p>
-              Para una letra de la mano izquierda, mantén <kbd>⇧</kbd> con el meñique <b>derecho</b>,
-              y al revés. Nunca con la misma mano que pulsa la letra: te obliga a torcer la muñeca y
-              a perder la fila guía. <kbd>Bloq Mayús</kbd> no se usa para escribir texto.
-            </p>
-            <p class="step__note">
-              En el teclado en pantalla verás iluminarse a la vez la letra y el Shift que toca.
-            </p>
+            <h2 data-i18n="tutorial.step5.title">Mayúsculas: Shift con la mano contraria</h2>
+            <p data-i18n-html="tutorial.step5.body"></p>
+            <p class="step__note" data-i18n-html="tutorial.step5.note"></p>
           </li>
 
           <li class="step">
-            <h2>Cómo practicar</h2>
+            <h2 data-i18n="tutorial.step6.title">Cómo practicar</h2>
             <ul class="checklist">
-              <li><b>No mires las manos.</b> Si hace falta, tápalas con un paño los primeros días.</li>
-              <li><b>Precisión antes que velocidad.</b> La velocidad llega sola; los errores aprendidos, no se van solos.</li>
-              <li><b>Ritmo constante.</b> Mejor lento y regular que a ráfagas: el oído te avisa cuando el ritmo se rompe.</li>
-              <li><b>10-15 minutos al día.</b> Todos los días vale mucho más que dos horas el domingo.</li>
-              <li><b>Vuelve siempre a la fila guía</b> después de cada pulsación, aunque tardes más.</li>
-              <li><b>Repite la lección</b> hasta las tres estrellas antes de pasar a la siguiente.</li>
+              <li data-i18n-html="tutorial.step6.item1"></li>
+              <li data-i18n-html="tutorial.step6.item2"></li>
+              <li data-i18n-html="tutorial.step6.item3"></li>
+              <li data-i18n-html="tutorial.step6.item4"></li>
+              <li data-i18n-html="tutorial.step6.item5"></li>
+              <li data-i18n-html="tutorial.step6.item6"></li>
             </ul>
           </li>
 
           <li class="step">
-            <h2>Errores frecuentes</h2>
+            <h2 data-i18n="tutorial.step7.title">Errores frecuentes</h2>
             <ul class="checklist checklist--warn">
-              <li>Mirar el teclado en pantalla en vez del texto: úsalo solo cuando te pierdas.</li>
-              <li>Correr antes de dominar la lección: por debajo del 95 % de precisión, frena.</li>
-              <li>Golpear las teclas con fuerza; basta con rozarlas.</li>
-              <li>Apoyar las muñecas mientras escribes.</li>
-              <li>Usar siempre el mismo Shift, o esquivar el meñique con el dedo de al lado.</li>
-              <li>Mirar el teclado «solo para los números»: también entran en el temario.</li>
+              <li data-i18n-html="tutorial.step7.item1"></li>
+              <li data-i18n-html="tutorial.step7.item2"></li>
+              <li data-i18n-html="tutorial.step7.item3"></li>
+              <li data-i18n-html="tutorial.step7.item4"></li>
+              <li data-i18n-html="tutorial.step7.item5"></li>
+              <li data-i18n-html="tutorial.step7.item6"></li>
             </ul>
           </li>
         </ol>
 
         <div class="panel">
-          <h3>Qué velocidad esperar</h3>
-          <p>
-            Las ppm son palabras por minuto, contando cinco pulsaciones por palabra. Escribir a
-            mano son unas 20 ppm; escribir mirando el teclado con dos dedos, entre 25 y 30.
-          </p>
+          <h3 data-i18n="tutorial.speed.title">Qué velocidad esperar</h3>
+          <p data-i18n="tutorial.speed.lead"></p>
           <div class="table-wrap">
             <table class="table">
-              <thead><tr><th>ppm</th><th>Nivel</th></tr></thead>
+              <thead>
+                <tr>
+                  <th data-i18n="tutorial.speed.col1">ppm</th>
+                  <th data-i18n="tutorial.speed.col2">Nivel</th>
+                </tr>
+              </thead>
               <tbody>
-                <tr><td>15-25</td><td>Ya escribes sin mirar. El objetivo de los primeros bloques.</td></tr>
-                <tr><td>30-40</td><td>Soltura: escribes casi al ritmo en que piensas la frase.</td></tr>
-                <tr><td>50-60</td><td>Buen nivel profesional.</td></tr>
-                <tr><td>70+</td><td>Rápido: a partir de aquí manda la precisión, no los dedos.</td></tr>
+                <tr><td>15-25</td><td data-i18n="tutorial.speed.row1"></td></tr>
+                <tr><td>30-40</td><td data-i18n="tutorial.speed.row2"></td></tr>
+                <tr><td>50-60</td><td data-i18n="tutorial.speed.row3"></td></tr>
+                <tr><td>70+</td><td data-i18n="tutorial.speed.row4"></td></tr>
               </tbody>
             </table>
           </div>
           <div class="panel__actions">
-            <button class="button button--primary" id="tutorial-start" type="button">Empezar por la lección 1</button>
+            <button class="button button--primary" id="tutorial-start" type="button"></button>
           </div>
         </div>
       </section>
@@ -232,10 +222,12 @@
       <!-- Lessons -->
       <section class="view" id="view-lessons" hidden>
         <div class="hero">
-          <h1>Aprende a escribir sin mirar el teclado</h1>
+          <h1 data-i18n="lessons.title">Aprende a escribir sin mirar el teclado</h1>
           <p id="hero-lead"></p>
           <div class="hero__stats" id="hero-stats"></div>
-          <button class="button button--primary" id="continue-button" type="button">Continuar donde lo dejé</button>
+          <button class="button button--primary" id="continue-button" type="button" data-i18n="lessons.continue">
+            Continuar donde lo dejé
+          </button>
         </div>
         <div id="blocks"></div>
       </section>
@@ -244,27 +236,38 @@
       <section class="view view--practice" id="view-practice" hidden>
         <div class="practice__head">
           <div>
-            <a class="back-link" href="#/lecciones">← Lecciones</a>
+            <a class="back-link" href="#/lecciones" data-i18n="practice.back">← Lecciones</a>
             <h2 id="practice-title">Lección</h2>
             <p class="practice__subtitle" id="practice-subtitle"></p>
           </div>
           <div class="practice__controls">
-            <button class="button" id="restart-button" type="button">Reiniciar <kbd>Esc</kbd></button>
-            <button class="button" id="next-button" type="button" hidden>Siguiente lección →</button>
+            <button class="button" id="restart-button" type="button">
+              <span data-i18n="practice.restart">Reiniciar</span> <kbd>Esc</kbd>
+            </button>
+            <button class="button" id="next-button" type="button" hidden data-i18n="practice.next">
+              Siguiente lección →
+            </button>
           </div>
         </div>
 
         <div class="metrics">
-          <div class="metric"><span class="metric__value" id="metric-wpm">0</span><span class="metric__label">ppm</span></div>
-          <div class="metric"><span class="metric__value" id="metric-accuracy">100%</span><span class="metric__label">precisión</span></div>
-          <div class="metric"><span class="metric__value" id="metric-errors">0</span><span class="metric__label">errores</span></div>
-          <div class="metric"><span class="metric__value" id="metric-time">0:00</span><span class="metric__label">tiempo</span></div>
+          <div class="metric"><span class="metric__value" id="metric-wpm">0</span><span class="metric__label" data-i18n="metric.wpm">ppm</span></div>
+          <div class="metric"><span class="metric__value" id="metric-accuracy">100%</span><span class="metric__label" data-i18n="metric.accuracy">precisión</span></div>
+          <div class="metric"><span class="metric__value" id="metric-errors">0</span><span class="metric__label" data-i18n="metric.errors">errores</span></div>
+          <div class="metric"><span class="metric__value" id="metric-time">0:00</span><span class="metric__label" data-i18n="metric.time">tiempo</span></div>
         </div>
         <div class="progressbar"><div class="progressbar__fill" id="progress-fill"></div></div>
 
-        <div class="typing" id="typing" tabindex="0" role="textbox" aria-label="Área de escritura">
+        <div
+          class="typing"
+          id="typing"
+          tabindex="0"
+          role="textbox"
+          aria-label="Área de escritura"
+          data-i18n-attr="aria-label:practice.area"
+        >
           <div class="typing__text" id="typing-text"></div>
-          <div class="typing__hint" id="typing-hint">Empieza a escribir para arrancar el cronómetro</div>
+          <div class="typing__hint" id="typing-hint" data-i18n="practice.hint"></div>
         </div>
 
         <div class="guide">
@@ -276,12 +279,17 @@
       <!-- Free practice -->
       <section class="view" id="view-free" hidden>
         <div class="panel">
-          <h2>Práctica libre</h2>
-          <p>Pega el texto que quieras practicar y pulsa empezar.</p>
-          <textarea id="free-text" rows="6" placeholder="Escribe o pega aquí tu texto…"></textarea>
+          <h2 data-i18n="free.title">Práctica libre</h2>
+          <p data-i18n="free.lead"></p>
+          <textarea
+            id="free-text"
+            rows="6"
+            placeholder="Escribe o pega aquí tu texto…"
+            data-i18n-attr="placeholder:free.placeholder"
+          ></textarea>
           <div class="panel__actions">
-            <button class="button button--primary" id="free-start" type="button">Empezar</button>
-            <button class="button" id="free-sample" type="button">Texto de ejemplo</button>
+            <button class="button button--primary" id="free-start" type="button" data-i18n="free.start">Empezar</button>
+            <button class="button" id="free-sample" type="button" data-i18n="free.sample">Texto de ejemplo</button>
           </div>
         </div>
       </section>
@@ -289,23 +297,25 @@
       <!-- Progress -->
       <section class="view" id="view-progress" hidden>
         <div class="view__head">
-          <h2>Tu progreso</h2>
-          <button class="button" id="share-progress" type="button">Compartir mi progreso</button>
+          <h2 data-i18n="progress.title">Tu progreso</h2>
+          <button class="button" id="share-progress" type="button" data-i18n="progress.share">Compartir mi progreso</button>
         </div>
         <div class="metrics metrics--wide" id="progress-summary"></div>
         <div class="panel">
-          <h3>Velocidad por sesión</h3>
+          <h3 data-i18n="progress.chart">Velocidad por sesión</h3>
           <div class="chart" id="progress-chart"></div>
         </div>
         <div class="panel">
-          <h3>Teclas que más se te resisten</h3>
+          <h3 data-i18n="progress.weak">Teclas que más se te resisten</h3>
           <div class="chips" id="weak-keys"></div>
         </div>
         <div class="panel">
-          <h3>Historial</h3>
+          <h3 data-i18n="progress.history">Historial</h3>
           <div class="table-wrap"><table class="table" id="history-table"></table></div>
           <div class="panel__actions">
-            <button class="button button--danger" id="clear-progress" type="button">Borrar progreso</button>
+            <button class="button button--danger" id="clear-progress" type="button" data-i18n="progress.clear">
+              Borrar progreso
+            </button>
           </div>
         </div>
       </section>
@@ -313,71 +323,113 @@
 
     <footer class="footer">
       <div class="footer__text">
-        <p>
-          <b>Mecanografía</b> es un proyecto gratuito y de código abierto: sin cuentas, sin
-          anuncios y con tu progreso guardado solo en tu navegador.
-        </p>
-        <p>Si te está sirviendo y te apetece echar una mano, puedes invitarme a un café.</p>
+        <p data-i18n-html="footer.pitch"></p>
+        <p data-i18n="footer.donateLead"></p>
       </div>
       <div class="footer__actions">
-        <button class="button" id="share-project" type="button">Compartir</button>
+        <button class="button" id="share-project" type="button" data-i18n="footer.share">Compartir</button>
         <a
           class="button button--primary footer__donate"
           href="https://paypal.me/dibanez1979"
           target="_blank"
           rel="noopener noreferrer"
+          data-i18n="footer.donate"
           >Donar con PayPal</a
         >
       </div>
       <p class="footer__legal">
-        <button class="link-button" id="consent-settings" type="button">
+        <button class="link-button" id="consent-settings" type="button" data-i18n="footer.consent">
           Preferencias de cookies
         </button>
       </p>
     </footer>
 
     <!-- Cookie banner -->
-    <section class="consent" id="consent-banner" role="dialog" aria-label="Aviso de cookies" hidden>
+    <section
+      class="consent"
+      id="consent-banner"
+      role="dialog"
+      aria-label="Aviso de cookies"
+      data-i18n-attr="aria-label:consent.label"
+      hidden
+    >
       <div class="consent__text">
-        <h2>Cookies de analítica</h2>
-        <p>
-          Uso Google Analytics (a través de Tag Manager) solo para saber qué lecciones se usan y
-          mejorar el temario. No hay publicidad ni perfilado, y tu progreso se sigue guardando
-          únicamente en tu navegador. Hasta que decidas, no se guarda ninguna cookie de analítica.
-        </p>
+        <h2 data-i18n="consent.title">Cookies de analítica</h2>
+        <p data-i18n="consent.body"></p>
       </div>
       <div class="consent__actions">
-        <button class="button" type="button" data-consent="denied">Rechazar</button>
-        <button class="button button--primary" type="button" data-consent="granted">Aceptar</button>
+        <button class="button" type="button" data-consent="denied" data-i18n="consent.deny">Rechazar</button>
+        <button class="button button--primary" type="button" data-consent="granted" data-i18n="consent.accept">Aceptar</button>
       </div>
     </section>
 
+    <!-- Settings: interface language, layout and physical keyboard shape -->
+    <dialog class="settings" id="settings-dialog">
+      <h2 data-i18n="settings.title">Ajustes</h2>
+
+      <label class="field">
+        <span class="field__label" data-i18n="settings.language">Idioma de la interfaz</span>
+        <select class="select" id="setting-language"></select>
+      </label>
+
+      <label class="field">
+        <span class="field__label" data-i18n="settings.layout">Distribución del teclado</span>
+        <select class="select" id="setting-layout"></select>
+      </label>
+      <p class="field__hint" data-i18n="settings.layoutHint"></p>
+
+      <label class="field">
+        <span class="field__label" data-i18n="settings.form">Tipo de teclado</span>
+        <select class="select" id="setting-form"></select>
+      </label>
+      <p class="field__hint" id="setting-form-note"></p>
+      <p class="field__hint field__hint--warn" id="setting-layer-note" hidden data-i18n="settings.layerNote"></p>
+
+      <div class="settings__preview"><div class="keyboard" id="settings-keyboard" aria-hidden="true"></div></div>
+
+      <fieldset class="settings__group">
+        <legend data-i18n="settings.display">Durante la práctica</legend>
+        <label class="check">
+          <input type="checkbox" id="setting-keyboard" />
+          <span data-i18n="settings.showKeyboard">Mostrar el teclado en pantalla</span>
+        </label>
+        <label class="check">
+          <input type="checkbox" id="setting-hands" />
+          <span data-i18n="settings.showHands">Mostrar la guía de manos</span>
+        </label>
+      </fieldset>
+
+      <div class="settings__actions">
+        <button class="button button--primary" id="settings-close" type="button" data-i18n="settings.close">Cerrar</button>
+      </div>
+    </dialog>
+
     <!-- Share dialog (fallback when the browser has no native share sheet) -->
     <dialog class="share" id="share-dialog">
-      <h2 id="share-title">Compartir</h2>
+      <h2 id="share-title" data-i18n="share.title">Compartir</h2>
       <p class="share__preview" id="share-preview"></p>
       <div class="share__targets" id="share-targets"></div>
       <div class="share__actions">
-        <button class="button" id="share-copy" type="button">Copiar texto y enlace</button>
-        <button class="button" id="share-close" type="button">Cerrar</button>
+        <button class="button" id="share-copy" type="button" data-i18n="share.copy">Copiar texto y enlace</button>
+        <button class="button" id="share-close" type="button" data-i18n="share.close">Cerrar</button>
       </div>
     </dialog>
 
     <!-- Result dialog -->
     <dialog class="result" id="result-dialog">
-      <h2 id="result-title">¡Lección completada!</h2>
+      <h2 id="result-title" data-i18n="result.title">¡Lección completada!</h2>
       <div class="result__stars" id="result-stars"></div>
       <div class="metrics">
-        <div class="metric"><span class="metric__value" id="result-wpm">0</span><span class="metric__label">ppm</span></div>
-        <div class="metric"><span class="metric__value" id="result-accuracy">0%</span><span class="metric__label">precisión</span></div>
-        <div class="metric"><span class="metric__value" id="result-errors">0</span><span class="metric__label">errores</span></div>
-        <div class="metric"><span class="metric__value" id="result-time">0:00</span><span class="metric__label">tiempo</span></div>
+        <div class="metric"><span class="metric__value" id="result-wpm">0</span><span class="metric__label" data-i18n="metric.wpm">ppm</span></div>
+        <div class="metric"><span class="metric__value" id="result-accuracy">0%</span><span class="metric__label" data-i18n="metric.accuracy">precisión</span></div>
+        <div class="metric"><span class="metric__value" id="result-errors">0</span><span class="metric__label" data-i18n="metric.errors">errores</span></div>
+        <div class="metric"><span class="metric__value" id="result-time">0:00</span><span class="metric__label" data-i18n="metric.time">tiempo</span></div>
       </div>
       <p class="result__note" id="result-note"></p>
       <div class="result__actions">
-        <button class="button" id="result-share" type="button">Compartir</button>
-        <button class="button" id="result-repeat" type="button">Repetir</button>
-        <button class="button button--primary" id="result-next" type="button">Siguiente lección</button>
+        <button class="button" id="result-share" type="button" data-i18n="share.title">Compartir</button>
+        <button class="button" id="result-repeat" type="button" data-i18n="result.repeat">Repetir</button>
+        <button class="button button--primary" id="result-next" type="button" data-i18n="result.next">Siguiente lección</button>
       </div>
     </dialog>
 

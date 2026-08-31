@@ -5,9 +5,14 @@ import {
   LAYOUT_LIST,
   defaultLayoutForCourse,
   getLayout,
+} from './data/keyboard-layout.js';
+import {
+  FORM_LIST,
+  buildKeyboard,
+  getForm,
   homeKeys,
   keysByFinger,
-} from './data/keyboard-layout.js';
+} from './data/keyboard-forms.js';
 import {
   buildExercise,
   courseOfLesson,
@@ -16,24 +21,20 @@ import {
   lessonsOfBlock,
 } from './data/lessons.js';
 import { TypingEngine, ratingFor } from './engine.js';
+import {
+  LANGUAGES,
+  applyTranslations,
+  detectLanguage,
+  getLanguage,
+  localized,
+  setLanguage,
+  t,
+} from './i18n.js';
 import { KeyboardView } from './keyboard.js';
 import { initShare, openShare } from './share.js';
 import { store } from './storage.js';
 
 const $ = (selector) => document.querySelector(selector);
-
-const SAMPLE_TEXT =
-  'La mecanografía se aprende con constancia: pocos minutos cada día valen más que una tarde entera. ' +
-  'Coloca los dedos sobre la fila guía, mantén la vista en la pantalla y deja que las manos recuerden el camino.';
-
-const COURSE_LEAD = {
-  es: (count) =>
-    `${count} lecciones progresivas para teclado español. Empieza por la fila guía y avanza ` +
-    'hasta escribir párrafos completos con tildes, signos y números.',
-  en: (count) =>
-    `${count} lecciones progresivas para teclado inglés. Empieza por la fila guía y avanza ` +
-    'hasta escribir párrafos completos con apóstrofos, signos y números.',
-};
 
 const app = {
   lesson: null,
@@ -41,13 +42,16 @@ const app = {
   freeText: '',
   engine: null,
   keyboard: null,
-  tutorialKeyboard: null,
+  view: null,
+  tutorialView: null,
+  settingsView: null,
   input: null,
   charEls: [],
   deadPending: false,
   tickId: null,
   settings: store.getSettings(),
   layout: null,
+  form: null,
   course: null,
 };
 
@@ -62,6 +66,14 @@ function starsMarkup(count) {
   return `<span class="stars">${'★'.repeat(count)}<span class="stars--empty">${'★'.repeat(3 - count)}</span></span>`;
 }
 
+function locale() {
+  return getLanguage() === 'en' ? 'en-GB' : 'es-ES';
+}
+
+function charName(char) {
+  return char === ' ' ? t('common.space') : char;
+}
+
 /* ---------------------------------------------------------------- theme */
 
 function applyTheme(theme) {
@@ -69,22 +81,54 @@ function applyTheme(theme) {
   app.settings = store.saveSettings({ theme });
 }
 
-/* --------------------------------------------------------------- layout */
+/* ------------------------------------------------ layout, shape, language */
+
+/** Rebuilds the drawn keyboard shared by practice, tutorial and settings. */
+function rebuildKeyboard() {
+  app.keyboard = buildKeyboard(app.layout, app.form.id);
+  app.view?.setKeyboard(app.keyboard);
+  app.tutorialView?.setKeyboard(app.keyboard);
+  app.settingsView?.setKeyboard(app.keyboard);
+  $('#setting-layer-note').hidden = !app.keyboard.layerCodes.length || !app.form.layered;
+}
 
 /** Switches keyboard layout, which also switches the course of lessons. */
 function applyLayout(layoutId, { rerender = true } = {}) {
   app.layout = getLayout(layoutId);
   app.course = getCourse(app.layout.course);
   app.settings = store.saveSettings({ layout: app.layout.id });
-  $('#layout-select').value = app.layout.id;
-
-  app.keyboard?.setLayout(app.layout);
-  app.tutorialKeyboard?.setLayout(app.layout);
+  rebuildKeyboard();
   if (!rerender) return;
 
   // A lesson from the previous course no longer applies to this keyboard.
   if (app.lesson && !app.lesson.custom) location.hash = '#/lecciones';
   else route();
+}
+
+/** Switches the physical shape; the characters and the course stay put. */
+function applyForm(formId) {
+  app.form = getForm(formId);
+  app.settings = store.saveSettings({ form: app.form.id });
+  $('#setting-form-note').textContent = t(`form.${app.form.id}.note`);
+  rebuildKeyboard();
+}
+
+function applyLanguage(languageId, { rerender = true } = {}) {
+  setLanguage(languageId);
+  app.settings = store.saveSettings({ language: getLanguage() });
+  applyTranslations();
+  fillSelects();
+  $('#setting-form-note').textContent = t(`form.${app.form.id}.note`);
+  // Hand labels and key names are drawn, not markup: they need a repaint.
+  app.view?.render();
+  app.tutorialView?.render();
+  app.settingsView?.render();
+  if (rerender) route();
+}
+
+function applyDisplaySettings() {
+  $('#keyboard').hidden = !app.settings.showKeyboard;
+  $('#hands').hidden = !app.settings.showHands;
 }
 
 /* -------------------------------------------------------------- routing */
@@ -109,6 +153,8 @@ function showView(name) {
     event: 'view_change',
     view: name,
     layout: app.layout?.id,
+    keyboard_form: app.form?.id,
+    language: getLanguage(),
     path: location.hash || '#/lecciones',
   });
 }
@@ -156,13 +202,17 @@ function route() {
 /* -------------------------------------------------------------- tutorial */
 
 function shortFingerName(id) {
-  return FINGERS[id].name.replace(' izquierdo', ' izq.').replace(' derecho', ' der.');
+  const name = t(`finger.${id}`);
+  return getLanguage() === 'en'
+    ? name.replace('left ', 'L. ').replace('right ', 'R. ').replace(' finger', '')
+    : name.replace(' izquierdo', ' izq.').replace(' derecho', ' der.');
 }
 
 function renderTutorial() {
   $('#tutorial-layout-name').textContent = app.layout.name;
+  $('#tutorial-form-name').textContent = t(`form.${app.form.id}`).toLowerCase();
 
-  const home = homeKeys(app.layout);
+  const home = homeKeys(app.keyboard);
   const render = (hand) =>
     home
       .filter((key) => key.finger.startsWith(hand))
@@ -174,10 +224,10 @@ function renderTutorial() {
   $('#tutorial-home-left').innerHTML = render('l');
   $('#tutorial-home-right').innerHTML = render('r');
 
-  const perFinger = keysByFinger(app.layout);
+  const perFinger = keysByFinger(app.keyboard);
   $('#tutorial-fingers').innerHTML = Object.keys(FINGERS)
     .map((id) => {
-      const keys = id.endsWith('t') ? ['Espacio'] : perFinger.get(id) ?? [];
+      const keys = id.endsWith('t') ? [t('key.Space')] : perFinger.get(id) ?? [];
       return `
         <button class="finger-chip" type="button" data-finger="${id}">
           <span class="finger-chip__name">${shortFingerName(id)}</span>
@@ -186,21 +236,23 @@ function renderTutorial() {
     })
     .join('');
 
-  $('#tutorial-start').textContent = `Empezar por «${app.course.lessons[0].title}»`;
+  $('#tutorial-start').textContent = t('tutorial.start', {
+    lesson: localized(app.course.lessons[0].title),
+  });
 }
 
 function spotlight(fingerId) {
-  app.tutorialKeyboard.spotlightFinger(fingerId);
+  app.tutorialView.spotlightFinger(fingerId);
   for (const chip of document.querySelectorAll('.finger-chip')) {
     chip.classList.toggle('is-active', chip.dataset.finger === fingerId);
   }
 }
 
 function initTutorial() {
-  app.tutorialKeyboard = new KeyboardView(
+  app.tutorialView = new KeyboardView(
     $('#tutorial-keyboard'),
     $('#tutorial-hands'),
-    app.layout,
+    app.keyboard,
     { tinted: true },
   );
 
@@ -245,11 +297,11 @@ function renderLessons() {
     ? Math.round((accuracies.reduce((a, b) => a + b, 0) / accuracies.length) * 10) / 10
     : 0;
 
-  $('#hero-lead').textContent = COURSE_LEAD[app.course.id](lessons.length);
+  $('#hero-lead').textContent = t(`course.lead.${app.course.id}`, { count: lessons.length });
   $('#hero-stats').innerHTML = `
-    <div class="hero__stat"><b>${done}/${lessons.length}</b><span>lecciones</span></div>
-    <div class="hero__stat"><b>${bestWpm}</b><span>mejor ppm</span></div>
-    <div class="hero__stat"><b>${avgAccuracy || '—'}%</b><span>precisión media</span></div>`;
+    <div class="hero__stat"><b>${done}/${lessons.length}</b><span>${t('lessons.stat.done')}</span></div>
+    <div class="hero__stat"><b>${bestWpm}</b><span>${t('lessons.stat.wpm')}</span></div>
+    <div class="hero__stat"><b>${avgAccuracy || '—'}%</b><span>${t('lessons.stat.accuracy')}</span></div>`;
 
   const container = $('#blocks');
   container.textContent = '';
@@ -262,11 +314,11 @@ function renderLessons() {
         const stars = progress?.stars ?? 0;
         return `
           <button class="lesson-card ${progress ? 'is-done' : ''}" type="button" data-lesson="${lesson.id}">
-            <span class="lesson-card__title">${lesson.title}</span>
-            <span class="lesson-card__subtitle">${lesson.subtitle ?? typeLabel(lesson)}</span>
+            <span class="lesson-card__title">${localized(lesson.title)}</span>
+            <span class="lesson-card__subtitle">${localized(lesson.subtitle) ?? typeLabel(lesson)}</span>
             <span class="lesson-card__meta">
               ${starsMarkup(stars)}
-              <span>${progress ? `${progress.bestWpm} ppm · ${progress.bestAccuracy}%` : `objetivo ${lesson.target} ppm`}</span>
+              <span>${progress ? `${progress.bestWpm} ${t('metric.wpm')} · ${progress.bestAccuracy}%` : t('lesson.target', { wpm: lesson.target })}</span>
             </span>
           </button>`;
       })
@@ -274,9 +326,9 @@ function renderLessons() {
 
     section.innerHTML = `
       <div class="block__head">
-        <span class="block__number">Bloque ${block.id}</span>
-        <span class="block__title">${block.title}</span>
-        <span class="block__description">${block.description}</span>
+        <span class="block__number">${t('lessons.block', { number: block.id })}</span>
+        <span class="block__title">${localized(block.title)}</span>
+        <span class="block__description">${localized(block.description)}</span>
       </div>
       <div class="lesson-grid">${cards}</div>`;
     container.append(section);
@@ -289,9 +341,9 @@ function renderLessons() {
 }
 
 function typeLabel(lesson) {
-  if (lesson.type === 'text') return 'texto completo';
-  if (lesson.type === 'words') return 'palabras sueltas';
-  return `teclas ${lesson.keys.join(' ').toUpperCase()}`;
+  if (lesson.type === 'text') return t('lesson.type.text');
+  if (lesson.type === 'words') return t('lesson.type.words');
+  return t('lesson.type.keys', { keys: lesson.keys.join(' ').toUpperCase() });
 }
 
 /* ------------------------------------------------------------- practice */
@@ -336,7 +388,7 @@ function ensureInput() {
       return;
     }
     if (event.key === 'Enter' || event.key === 'Tab') event.preventDefault();
-    if (event.key.length === 1 || event.key === ' ') app.keyboard.flash(event.code, true);
+    if (event.key.length === 1 || event.key === ' ') app.view.flash(event.code, true);
   });
 
   input.addEventListener('focus', () => $('#typing').classList.add('is-focused'));
@@ -354,12 +406,13 @@ function startLesson(lesson, customText = null) {
   app.charEls = [];
   $('#typing-text').textContent = '';
 
-  $('#practice-title').textContent = lesson.title;
-  $('#practice-subtitle').textContent = lesson.subtitle
-    ? `${lesson.subtitle} · objetivo ${lesson.target} ppm`
-    : `Objetivo: ${lesson.target} ppm con 97 % de precisión`;
+  const subtitle = localized(lesson.subtitle);
+  $('#practice-title').textContent = localized(lesson.title);
+  $('#practice-subtitle').textContent = subtitle
+    ? t('practice.subtitle', { subtitle, wpm: lesson.target })
+    : t('practice.subtitleAlone', { wpm: lesson.target });
   $('#next-button').hidden = !nextLessonAfter(lesson.id);
-  $('#typing-hint').textContent = 'Empieza a escribir para arrancar el cronómetro';
+  $('#typing-hint').textContent = t('practice.hint');
 
   showView('practice');
   renderChars();
@@ -374,7 +427,14 @@ function startLesson(lesson, customText = null) {
 
 function startFreePractice(text) {
   startLesson(
-    { id: 'free', title: 'Práctica libre', subtitle: 'texto propio', target: 30, custom: true, text },
+    {
+      id: 'free',
+      title: { es: 'Práctica libre', en: 'Free practice' },
+      subtitle: { es: 'texto propio', en: 'your own text' },
+      target: 30,
+      custom: true,
+      text,
+    },
     text,
   );
 }
@@ -434,10 +494,10 @@ function renderChars() {
 function refreshHighlight() {
   const expected = app.engine?.expected;
   if (!expected) {
-    app.keyboard.clearHighlights();
+    app.view.clearHighlights();
     return;
   }
-  app.keyboard.highlight(expected, app.deadPending);
+  app.view.highlight(expected, app.deadPending);
 }
 
 function handleChar(char) {
@@ -494,15 +554,20 @@ function finishLesson() {
   $('#result-time').textContent = formatTime(stats.elapsedMs);
 
   const worst = stats.worstKeys
-    .map(({ char, count }) => `«${char === ' ' ? 'espacio' : char}» ×${count}`)
+    .map(({ char, count }) => `«${charName(char)}» ×${count}`)
     .join(', ');
   $('#result-note').textContent = stats.errors
-    ? `Teclas que más se te resistieron: ${worst}.`
+    ? t('result.note.worst', { keys: worst })
     : stars === 3
-      ? '¡Sin un solo fallo! Puedes pasar a la siguiente lección.'
-      : 'Sin errores. Repite para ganar velocidad.';
+      ? t('result.note.perfect')
+      : t('result.note.clean');
 
-  app.lastResult = { title: app.lesson.title, wpm: stats.wpm, accuracy: stats.accuracy, stars };
+  app.lastResult = {
+    title: localized(app.lesson.title),
+    wpm: stats.wpm,
+    accuracy: stats.accuracy,
+    stars,
+  };
 
   const next = nextLessonAfter(app.lesson.id);
   $('#result-next').hidden = !next || app.lesson.custom;
@@ -511,16 +576,9 @@ function finishLesson() {
 
 /* ----------------------------------------------------------------- share */
 
-const PROJECT_PITCH =
-  'Estoy aprendiendo mecanografía con este curso gratuito: teclado español e inglés, ' +
-  '31 lecciones y estadísticas de velocidad. #mecanografía';
-
 function shareResultText() {
   const { title, wpm, accuracy, stars } = app.lastResult;
-  return (
-    `${'★'.repeat(stars)} He completado la lección «${title}» a ${wpm} ppm con ${accuracy} % ` +
-    'de precisión aprendiendo mecanografía. #mecanografía'
-  );
+  return t('share.text.result', { stars: '★'.repeat(stars), title, wpm, accuracy });
 }
 
 function shareProgressText() {
@@ -532,11 +590,13 @@ function shareProgressText() {
     ? Math.round((sessions.reduce((sum, s) => sum + s.accuracy, 0) / sessions.length) * 10) / 10
     : 0;
 
-  if (!sessions.length) return PROJECT_PITCH;
-  return (
-    `Llevo ${done} de ${app.course.lessons.length} lecciones de mecanografía: ` +
-    `${bestWpm} ppm y ${avgAccuracy} % de precisión. #mecanografía`
-  );
+  if (!sessions.length) return t('share.text.project');
+  return t('share.text.progress', {
+    done,
+    total: app.course.lessons.length,
+    wpm: bestWpm,
+    accuracy: avgAccuracy,
+  });
 }
 
 /* -------------------------------------------------------------- progress */
@@ -552,11 +612,11 @@ function renderProgress() {
     : 0;
 
   $('#progress-summary').innerHTML = `
-    <div class="metric"><span class="metric__value">${completed}</span><span class="metric__label">lecciones tocadas</span></div>
-    <div class="metric"><span class="metric__value">${sessions.length}</span><span class="metric__label">sesiones</span></div>
-    <div class="metric"><span class="metric__value">${bestWpm}</span><span class="metric__label">mejor ppm</span></div>
-    <div class="metric"><span class="metric__value">${avgAccuracy || '—'}%</span><span class="metric__label">precisión media</span></div>
-    <div class="metric"><span class="metric__value">${formatTime(totalMs)}</span><span class="metric__label">tiempo total</span></div>`;
+    <div class="metric"><span class="metric__value">${completed}</span><span class="metric__label">${t('progress.stat.lessons')}</span></div>
+    <div class="metric"><span class="metric__value">${sessions.length}</span><span class="metric__label">${t('progress.stat.sessions')}</span></div>
+    <div class="metric"><span class="metric__value">${bestWpm}</span><span class="metric__label">${t('progress.stat.wpm')}</span></div>
+    <div class="metric"><span class="metric__value">${avgAccuracy || '—'}%</span><span class="metric__label">${t('progress.stat.accuracy')}</span></div>
+    <div class="metric"><span class="metric__value">${formatTime(totalMs)}</span><span class="metric__label">${t('progress.stat.time')}</span></div>`;
 
   const recent = sessions.slice(-40);
   const max = Math.max(10, ...recent.map((s) => s.wpm));
@@ -564,10 +624,10 @@ function renderProgress() {
     ? recent
         .map(
           (s) =>
-            `<div class="chart__bar" style="height:${Math.max(4, (s.wpm / max) * 100)}%" title="${s.wpm} ppm · ${s.accuracy}%"></div>`,
+            `<div class="chart__bar" style="height:${Math.max(4, (s.wpm / max) * 100)}%" title="${s.wpm} ${t('metric.wpm')} · ${s.accuracy}%"></div>`,
         )
         .join('')
-    : '<p class="chart__empty">Todavía no hay sesiones registradas.</p>';
+    : `<p class="chart__empty">${t('progress.emptyChart')}</p>`;
 
   const counts = new Map();
   for (const session of sessions) {
@@ -578,9 +638,9 @@ function renderProgress() {
   const weak = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 12);
   $('#weak-keys').innerHTML = weak.length
     ? weak
-        .map(([char, count]) => `<span class="chip">${char === ' ' ? 'espacio' : char} <b>${count}</b></span>`)
+        .map(([char, count]) => `<span class="chip">${charName(char)} <b>${count}</b></span>`)
         .join('')
-    : '<p class="chart__empty">Sin errores registrados todavía.</p>';
+    : `<p class="chart__empty">${t('progress.emptyWeak')}</p>`;
 
   const rows = sessions
     .slice(-20)
@@ -589,36 +649,86 @@ function renderProgress() {
       const lesson = getLesson(session.lessonId);
       const date = new Date(session.at);
       return `<tr>
-        <td>${lesson?.title ?? session.lessonId}</td>
+        <td>${localized(lesson?.title) ?? session.lessonId}</td>
         <td>${session.wpm}</td>
         <td>${session.accuracy}%</td>
         <td>${session.errors}</td>
-        <td>${date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })} ${date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</td>
+        <td>${date.toLocaleDateString(locale(), { day: '2-digit', month: 'short' })} ${date.toLocaleTimeString(locale(), { hour: '2-digit', minute: '2-digit' })}</td>
       </tr>`;
     })
     .join('');
   $('#history-table').innerHTML = rows
-    ? `<thead><tr><th>Lección</th><th>ppm</th><th>precisión</th><th>errores</th><th>fecha</th></tr></thead><tbody>${rows}</tbody>`
-    : '<tbody><tr><td>Aún no hay historial.</td></tr></tbody>';
+    ? `<thead><tr><th>${t('progress.col.lesson')}</th><th>${t('progress.col.wpm')}</th><th>${t('progress.col.accuracy')}</th><th>${t('progress.col.errors')}</th><th>${t('progress.col.date')}</th></tr></thead><tbody>${rows}</tbody>`
+    : `<tbody><tr><td>${t('progress.emptyHistory')}</td></tr></tbody>`;
+}
+
+/* ------------------------------------------------------------- settings */
+
+function fillSelects() {
+  const options = (items, selected) =>
+    items.map(({ id, name }) => `<option value="${id}"${id === selected ? ' selected' : ''}>${name}</option>`).join('');
+
+  $('#setting-language').innerHTML = options(LANGUAGES, getLanguage());
+  $('#setting-layout').innerHTML = options(
+    LAYOUT_LIST.map(({ id, name }) => ({ id, name })),
+    app.layout.id,
+  );
+  $('#setting-form').innerHTML = options(
+    FORM_LIST.map(({ id }) => ({ id, name: t(`form.${id}`) })),
+    app.form.id,
+  );
+}
+
+function initSettings() {
+  const dialog = $('#settings-dialog');
+  fillSelects();
+  $('#setting-form-note').textContent = t(`form.${app.form.id}.note`);
+  $('#setting-keyboard').checked = app.settings.showKeyboard;
+  $('#setting-hands').checked = app.settings.showHands;
+
+  $('#settings-open').addEventListener('click', () => {
+    if (!app.settingsView) {
+      app.settingsView = new KeyboardView($('#settings-keyboard'), null, app.keyboard, { tinted: true });
+    }
+    dialog.showModal();
+  });
+  $('#settings-close').addEventListener('click', () => dialog.close());
+  dialog.addEventListener('close', () => app.input?.focus());
+
+  $('#setting-language').addEventListener('change', (event) => applyLanguage(event.target.value));
+  $('#setting-layout').addEventListener('change', (event) => applyLayout(event.target.value));
+  $('#setting-form').addEventListener('change', (event) => {
+    applyForm(event.target.value);
+    if (!$('#view-tutorial').hidden) renderTutorial();
+  });
+
+  $('#setting-keyboard').addEventListener('change', (event) => {
+    app.settings = store.saveSettings({ showKeyboard: event.target.checked });
+    applyDisplaySettings();
+  });
+  $('#setting-hands').addEventListener('change', (event) => {
+    app.settings = store.saveSettings({ showHands: event.target.checked });
+    applyDisplaySettings();
+  });
 }
 
 /* ------------------------------------------------------------------ init */
 
 function init() {
   applyTheme(app.settings.theme);
-
-  const select = $('#layout-select');
-  select.innerHTML = LAYOUT_LIST.map(
-    (layout) => `<option value="${layout.id}">${layout.name}</option>`,
-  ).join('');
-  select.addEventListener('change', () => applyLayout(select.value));
+  setLanguage(app.settings.language ?? detectLanguage());
+  applyTranslations();
 
   app.layout = getLayout(app.settings.layout);
+  app.form = getForm(app.settings.form);
   app.course = getCourse(app.layout.course);
-  select.value = app.layout.id;
+  app.keyboard = buildKeyboard(app.layout, app.form.id);
 
-  app.keyboard = new KeyboardView($('#keyboard'), $('#hands'), app.layout);
+  app.view = new KeyboardView($('#keyboard'), $('#hands'), app.keyboard);
   initTutorial();
+  initSettings();
+  applyDisplaySettings();
+  $('#setting-layer-note').hidden = !app.keyboard.layerCodes.length || !app.form.layered;
 
   $('#theme-toggle').addEventListener('click', () => {
     applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
@@ -648,7 +758,7 @@ function init() {
   $('#result-dialog').addEventListener('close', () => app.input?.focus());
 
   $('#free-sample').addEventListener('click', () => {
-    $('#free-text').value = SAMPLE_TEXT;
+    $('#free-text').value = t('free.sampleText');
   });
   $('#free-start').addEventListener('click', () => {
     const text = $('#free-text').value.trim().replace(/\s+/g, ' ');
@@ -660,13 +770,13 @@ function init() {
 
   initShare();
   $('#share-project').addEventListener('click', () => {
-    openShare({ title: 'Compartir el proyecto', text: PROJECT_PITCH });
+    openShare({ title: t('share.project'), text: t('share.text.project') });
   });
   $('#share-progress').addEventListener('click', () => {
-    openShare({ title: 'Compartir mi progreso', text: shareProgressText() });
+    openShare({ title: t('share.progress'), text: shareProgressText() });
   });
   $('#result-share').addEventListener('click', () => {
-    if (app.lastResult) openShare({ title: 'Compartir el resultado', text: shareResultText() });
+    if (app.lastResult) openShare({ title: t('share.result'), text: shareResultText() });
   });
 
   $('#clear-progress').addEventListener('click', () => {

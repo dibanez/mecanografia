@@ -9,8 +9,26 @@ compilación ni dependencias: es HTML, CSS y JavaScript con módulos ES nativos.
 - **Tutorial de iniciación**: postura, fila guía, reparto de dedos con un teclado
   coloreado e interactivo, uso del pulgar, Shift con la mano contraria, rutina de
   práctica y errores frecuentes. Se adapta a la distribución elegida.
-- **Tres distribuciones**: español (ISO), inglés US (ANSI) e inglés UK (ISO). El
-  selector está en la barra superior y la elección se recuerda.
+- **Configurador (⚙ en la barra superior)**: idioma de la interfaz, distribución
+  del teclado y tipo de teclado físico, con una vista previa en vivo. Todo se
+  recuerda en `localStorage`.
+- **Interfaz en español e inglés**, independiente de la distribución: puedes
+  practicar el teclado español con la interfaz en inglés o al revés. La primera
+  visita usa el idioma del navegador.
+- **Tres distribuciones**: español (ISO), inglés US (ANSI) e inglés UK (ISO). La
+  distribución decide qué carácter da cada tecla y con ella el temario.
+- **Once tipos de teclado físico**: completo con numérico, TKL, 75 %, 60 %,
+  portátil, portátil con numérico, Mac (Magic Keyboard), Mac con numérico,
+  partido clásico (Sculpt, Freestyle), partido columnar (ErgoDox, Moonlander,
+  Corne) y ortolineal (Planck, Preonic). El tipo solo cambia el dibujo y, en los
+  columnares y los Mac, qué dedo toca cada tecla: todos mandan los mismos
+  códigos de tecla, así que la distribución no varía. En los teclados donde las
+  cifras viven en una capa, el entrenador ilumina la tecla de capa.
+- En los tipos **Mac** las teclas llevan las serigrafías de Apple (⌘ command,
+  ⌥ option, ⌃ control, ⇪, ⇥, ↩, ⌫, fn) y el tercer nivel se pulsa con ⌥ option
+  en vez de AltGr: macOS manda `AltRight` para option, así que el resaltado es
+  el mismo. Ojo: el mapa de caracteres sigue siendo el de Windows, y en algunas
+  distribuciones Apple cambia qué símbolos hay tras option.
 - **31 lecciones progresivas por idioma**, repartidas en 7 bloques: fila guía →
   fila superior → fila inferior → tildes y diéresis (o ritmo en inglés: palabras y
   combinaciones frecuentes) → mayúsculas y puntuación → números y símbolos →
@@ -25,7 +43,8 @@ compilación ni dependencias: es HTML, CSS y JavaScript con módulos ES nativos.
 - **Progreso local**: mejor marca y estrellas por lección, historial de sesiones,
   gráfica de velocidad y las teclas que más se resisten. Todo en `localStorage`,
   sin servidor ni cuentas.
-- **Práctica libre** con cualquier texto propio y **tema claro/oscuro**.
+- **Práctica libre** con cualquier texto propio y **tema claro/oscuro**. El
+  teclado en pantalla y la guía de manos se pueden ocultar desde los ajustes.
 - **Compartir**: el proyecto desde el pie, el resultado de cada lección desde el
   diálogo de fin y el progreso global desde su pantalla. Usa la hoja nativa del
   sistema (`navigator.share`) cuando existe y, si no, un diálogo con WhatsApp,
@@ -46,6 +65,8 @@ Escribe el texto que aparece en pantalla sin mirar el teclado. Atajos:
 
 El teclado en pantalla dibuja la distribución seleccionada, no la del sistema
 operativo: elige la misma que tengas configurada para que las teclas coincidan.
+El tipo de teclado es solo cosmético salvo en los partidos columnares, donde
+cambia el reparto de dedos; puedes elegir el que más se parezca al tuyo.
 
 Las estrellas se otorgan según la precisión y el objetivo de ppm de cada lección:
 3 estrellas con ≥ 97 % de precisión alcanzando el objetivo, 2 con ≥ 92 %.
@@ -86,7 +107,14 @@ El contenedor de Google Tag Manager `GTM-M7VBLNGF` se carga desde `index.html`
 por hash y no recarga la página, `showView()` empuja un evento a `dataLayer`:
 
 ```js
-{ event: 'view_change', view: 'lessons', layout: 'es', path: '#/lecciones' }
+{
+  event: 'view_change',
+  view: 'lessons',
+  layout: 'es',
+  keyboard_form: 'sixty',
+  language: 'es',
+  path: '#/lecciones',
+}
 ```
 
 En GTM, dispara las vistas de página virtuales con un activador de tipo
@@ -114,6 +142,8 @@ css/styles.css              estilos y temas claro/oscuro
 js/app.js                   enrutado, bucle de práctica, tutorial y progreso
 js/engine.js                motor de escritura y cálculo de ppm/precisión
 js/keyboard.js              teclado en pantalla y guía de manos
+js/i18n.js                  idioma de la interfaz y nombres de teclas
+js/i18n-copy.js             textos de la página en español e inglés
 js/storage.js               persistencia en localStorage
 js/consent.js               aviso de cookies y modo de consentimiento
 js/share.js                 compartir en redes sociales
@@ -121,7 +151,8 @@ og.html / og.png            tarjeta de vista previa del enlace
 js/data/lessons.js          cursos, búsquedas y generador de ejercicios
 js/data/lessons-es.js       temario del teclado español
 js/data/lessons-en.js       temario del teclado inglés
-js/data/keyboard-layout.js  distribuciones ES/US/UK y asignación de dedos
+js/data/keyboard-layout.js  distribuciones ES/US/UK: qué carácter da cada tecla
+js/data/keyboard-forms.js   formas físicas: sobremesa, portátil, Mac, partidos, ortolineal
 ```
 
 ## Personalizar las lecciones
@@ -140,7 +171,33 @@ temario inglés van prefijados con `en-`), porque el progreso se guarda por id.
 
 ## Añadir una distribución
 
-En `js/data/keyboard-layout.js`, añade una entrada a `LAYOUTS` con sus filas de
-teclas (`base`, `shift`, `altgr`, `finger`, `home`) y el `course` cuyo temario le
-corresponde. Los bloques de letras `LETTERS_TOP`, `LETTERS_HOME` y
-`LETTERS_BOTTOM` se reutilizan en cualquier distribución QWERTY.
+El mapa lógico y la forma física están separados a propósito, porque un teclado
+partido manda los mismos `event.code` que uno normal.
+
+En `js/data/keyboard-layout.js`, añade una entrada a `LAYOUTS` con su objeto
+`keys` (por código de tecla: `base`, `shift`, `altgr`, `dead`), su `physical`
+(`iso` o `ansi`) y el `course` cuyo temario le corresponde. El bloque `LETTERS`
+se reutiliza en cualquier distribución QWERTY, y la asignación de dedos y la fila
+guía salen de `FINGER_BY_CODE` y `HOME_CODES`, comunes a todas.
+
+## Añadir un tipo de teclado
+
+En `js/data/keyboard-forms.js`, añade una entrada a `FORMS` con una función
+`sections(layout)` que devuelva las secciones a dibujar. Cada sección se pinta
+por filas (`orientation: 'rows'`) o por columnas con desplazamiento propio
+(`orientation: 'columns'`), y puede llevar un clúster de pulgares. Una celda de
+una fila puede ser una tecla, un hueco (`gap`) o un par de teclas a media altura
+(`stack`, las flechas ↑ y ↓ de los portátiles), y admite `label` propio para las
+serigrafías de cada fabricante. Marca la forma
+con `split: true` para separar las mitades y con `layered: true` cuando falten
+teclas: los caracteres que no estén dibujados iluminan la tecla con
+`role: 'layer'`. Añade también los textos `form.<id>` y `form.<id>.note` a
+`js/i18n.js`.
+
+## Añadir un idioma de interfaz
+
+Añade el idioma a `LANGUAGES` en `js/i18n.js`, traduce los diccionarios de
+`js/i18n.js` (cromo y nombres de teclas) y `js/i18n-copy.js` (textos de la
+página), y añade la clave a los títulos `{ es, en }` de los temarios. El marcado
+se traduce solo mediante los atributos `data-i18n`, `data-i18n-html` y
+`data-i18n-attr` de `index.html`.
