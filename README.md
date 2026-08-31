@@ -87,10 +87,12 @@ python3 -m http.server 8000
 ```
 
 Después de tocar el marcado de `index.html` o los textos de `js/i18n-copy.js`,
-regenera las páginas:
+regenera las páginas; y después de tocar el temario o una distribución,
+comprueba que los ejercicios se pueden teclear:
 
 ```sh
 node tools/build-pages.mjs
+node tools/check-exercises.mjs
 ```
 
 No hace falta instalar nada: es Node pelado, sin dependencias. El script llena
@@ -184,6 +186,7 @@ index.html                  marcado y página en español (generada)
 en/index.html               página en inglés (generada)
 sitemap.xml / robots.txt    indexación (generados)
 tools/build-pages.mjs       genera una página por idioma, sin dependencias
+tools/check-exercises.mjs   comprueba que todo ejercicio se puede teclear
 css/styles.css              estilos y temas claro/oscuro
 js/app.js                   enrutado, bucle de práctica, tutorial y progreso
 js/engine.js                motor de escritura y cálculo de ppm/precisión
@@ -200,6 +203,40 @@ js/data/lessons-en.js       temario del teclado inglés
 js/data/keyboard-layout.js  distribuciones ES/US/UK/UK-Mac: qué carácter da cada tecla
 js/data/keyboard-forms.js   formas físicas: sobremesa, portátil, Mac, partidos, ortolineal
 ```
+
+## Qué temario toca cada teclado
+
+El temario tiene que cumplir dos cosas, y en este orden:
+
+1. **Poder teclearse.** El curso español está lleno de ñ, tildes y `¿¡`, que un
+   teclado US o UK no tiene: ofrecerlo ahí sería un callejón sin salida, porque
+   el modo estricto no deja avanzar hasta acertar la tecla.
+2. **Seguir el idioma de la página**, cuando el teclado da para los dos.
+
+De ahí sale esta tabla, que es lo que hace `preferredCourse()` en `js/app.js`
+apoyándose en `courseFitsLayout()`:
+
+| Teclado | Página en español | Página en inglés |
+| --- | --- | --- |
+| Español (ISO) | temario español | temario inglés |
+| English US / UK / UK-Mac | temario inglés | temario inglés |
+
+El teclado manda: en un US no aparece nunca una lección con ñ, da igual el
+idioma de la interfaz. En un teclado español, en cambio, caben los dos
+temarios, así que decide la página — y el temario inglés se puede practicar
+perfectamente en un teclado español.
+
+Un enlace a una lección concreta (`#/practica/a-dieresis`) solo cambia de
+teclado si el que hay puesto no puede escribirla; si puede, se respeta el que
+eligió el visitante. Lo mismo vale para la práctica libre: si pegas un texto
+con teclas que tu distribución no tiene, se dice cuáles son en vez de arrancar
+un ejercicio imposible, y el «Texto de ejemplo» sale en el idioma del temario,
+no en el de la interfaz.
+
+`node tools/check-exercises.mjs` recorre las ocho combinaciones de teclado e
+idioma, genera 60 veces cada lección (los ejercicios son aleatorios) y falla si
+alguna pide una tecla que no está. El workflow de Pages lo ejecuta antes de
+desplegar.
 
 ## Personalizar las lecciones
 

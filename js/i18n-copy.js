@@ -118,11 +118,11 @@ export const COPY = {
     'lesson.type.words': 'palabras sueltas',
     'lesson.type.keys': 'teclas {keys}',
     'course.lead.es':
-      '{count} lecciones progresivas para teclado español. Empieza por la fila guía y avanza hasta ' +
-      'escribir párrafos completos con tildes, signos y números.',
+      '{count} lecciones progresivas en español. Empieza por la fila guía y avanza hasta escribir ' +
+      'párrafos completos con tildes, la ñ, signos y números.',
     'course.lead.en':
-      '{count} lecciones progresivas para teclado inglés. Empieza por la fila guía y avanza hasta ' +
-      'escribir párrafos completos con apóstrofos, signos y números.',
+      '{count} lecciones progresivas en inglés. Empieza por la fila guía y avanza hasta escribir ' +
+      'párrafos completos con apóstrofos, signos y números.',
 
     /* ------------------------------------------------------------ practice */
     'practice.back': '← Lecciones',
@@ -144,6 +144,9 @@ export const COPY = {
     'free.start': 'Empezar',
     'free.sample': 'Texto de ejemplo',
     'free.subtitle': 'texto propio',
+    'free.unsupported':
+      'Tu distribución ({layout}) no tiene tecla para esto: {keys}. Quítalo del texto o cambia de ' +
+      'distribución en Ajustes.',
     'free.sampleText':
       'La mecanografía se aprende con constancia: pocos minutos cada día valen más que una tarde ' +
       'entera. Coloca los dedos sobre la fila guía, mantén la vista en la pantalla y deja que las ' +
@@ -330,11 +333,11 @@ export const COPY = {
     'lesson.type.words': 'single words',
     'lesson.type.keys': 'keys {keys}',
     'course.lead.es':
-      '{count} progressive lessons for the Spanish keyboard. Start on the home row and work up to ' +
-      'full paragraphs with accents, punctuation and numbers.',
+      '{count} progressive lessons in Spanish. Start on the home row and work up to full ' +
+      'paragraphs with accents, the ñ, punctuation and numbers.',
     'course.lead.en':
-      '{count} progressive lessons for the English keyboard. Start on the home row and work up to ' +
-      'full paragraphs with apostrophes, punctuation and numbers.',
+      '{count} progressive lessons in English. Start on the home row and work up to full ' +
+      'paragraphs with apostrophes, punctuation and numbers.',
 
     /* ------------------------------------------------------------ practice */
     'practice.back': '← Lessons',
@@ -356,6 +359,9 @@ export const COPY = {
     'free.start': 'Start',
     'free.sample': 'Sample text',
     'free.subtitle': 'your own text',
+    'free.unsupported':
+      'Your layout ({layout}) has no key for this: {keys}. Take it out of the text or change the ' +
+      'layout in Settings.',
     'free.sampleText':
       'Touch typing is learnt through consistency: a few minutes every day are worth more than a ' +
       'whole afternoon. Put your fingers on the home row, keep your eyes on the screen and let your ' +

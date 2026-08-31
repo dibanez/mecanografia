@@ -6,6 +6,7 @@ import {
   LAYOUT_LIST,
   defaultLayoutForCourse,
   getLayout,
+  keyStepsFor,
 } from './data/keyboard-layout.js';
 import {
   FORM_LIST,
@@ -15,7 +16,9 @@ import {
   keysByFinger,
 } from './data/keyboard-forms.js';
 import {
+  COURSES,
   buildExercise,
+  courseFitsLayout,
   courseOfLesson,
   getCourse,
   getLesson,
@@ -109,11 +112,23 @@ function rebuildKeyboard() {
   updateAppleNote();
 }
 
-/** Switches keyboard layout, which also switches the course of lessons. */
+/**
+ * Which lessons to teach. The keyboard has the last word — a Spanish drill of
+ * ñ and accents cannot be typed on a US board — and, when both courses fit,
+ * the exercises follow the language of the page.
+ */
+function preferredCourse() {
+  const wanted = COURSES[getLanguage()];
+  return wanted && courseFitsLayout(wanted, app.layout) ? wanted : getCourse(app.layout.course);
+}
+
+/** Switches keyboard layout, which may switch the course of lessons with it. */
 function applyLayout(layoutId, { rerender = true } = {}) {
   app.layout = getLayout(layoutId);
-  app.course = getCourse(app.layout.course);
+  app.course = preferredCourse();
   app.settings = store.saveSettings({ layout: app.layout.id });
+  // Routing switches the layout too, so the dialog cannot be left behind.
+  $('#setting-layout').value = app.layout.id;
   rebuildKeyboard();
   if (!rerender) return;
 
@@ -126,6 +141,7 @@ function applyLayout(layoutId, { rerender = true } = {}) {
 function applyForm(formId) {
   app.form = getForm(formId);
   app.settings = store.saveSettings({ form: app.form.id });
+  $('#setting-form').value = app.form.id;
   $('#setting-form-note').textContent = t(`form.${app.form.id}.note`);
   rebuildKeyboard();
 }
@@ -208,13 +224,15 @@ function route() {
   stopPractice();
 
   if (section === 'practica' && param) {
-    // A link to a lesson of the other course switches the keyboard with it.
     const course = courseOfLesson(param);
-    if (course && course.id !== app.course.id) {
-      applyLayout(defaultLayoutForCourse(course.id).id, { rerender: false });
-    }
-    const lesson = app.course.lessons.find((item) => item.id === param);
+    const lesson = course ? getLesson(param) : null;
     if (lesson) {
+      // A link to a lesson only drags the keyboard along when the current one
+      // cannot type it; otherwise the visitor keeps the board they chose.
+      if (!courseFitsLayout(course, app.layout)) {
+        applyLayout(defaultLayoutForCourse(course.id).id, { rerender: false });
+      }
+      app.course = course;
       startLesson(lesson);
       return;
     }
@@ -465,6 +483,11 @@ function startLesson(lesson, customText = null) {
 
   clearInterval(app.tickId);
   app.tickId = setInterval(updateMetrics, 200);
+}
+
+/** Characters the chosen keyboard has no key for, so practice cannot ask them. */
+function unsupportedCharacters(text) {
+  return [...new Set(text)].filter((char) => !keyStepsFor(char, app.layout));
 }
 
 function startFreePractice(text) {
@@ -766,7 +789,7 @@ function init() {
 
   app.layout = getLayout(app.settings.layout);
   app.form = getForm(app.settings.form);
-  app.course = getCourse(app.layout.course);
+  app.course = preferredCourse();
   app.keyboard = buildKeyboard(app.layout, app.form.id);
 
   app.view = new KeyboardView($('#keyboard'), $('#hands'), app.keyboard);
@@ -804,11 +827,25 @@ function init() {
   $('#result-dialog').addEventListener('close', () => app.input?.focus());
 
   $('#free-sample').addEventListener('click', () => {
-    $('#free-text').value = t('free.sampleText');
+    // The sample belongs to the course, which is what the keyboard can type.
+    $('#free-text').value = translator(app.course.language)('free.sampleText');
+    $('#free-warning').hidden = true;
   });
   $('#free-start').addEventListener('click', () => {
     const text = $('#free-text').value.trim().replace(/\s+/g, ' ');
     if (!text) return;
+
+    const missing = unsupportedCharacters(text);
+    const warning = $('#free-warning');
+    warning.hidden = !missing.length;
+    if (missing.length) {
+      warning.textContent = t('free.unsupported', {
+        keys: missing.join(' '),
+        layout: app.layout.name,
+      });
+      return;
+    }
+
     app.freeText = text;
     if (location.hash === '#/libre/texto') startFreePractice(text);
     else location.hash = '#/libre/texto';

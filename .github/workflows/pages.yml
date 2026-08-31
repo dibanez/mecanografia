@@ -25,6 +25,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      # No exercise may ask for a key the chosen keyboard does not have.
+      - run: node tools/check-exercises.mjs
       # Regenerates one page per language, so a forgotten local build never
       # ships a stale translation.
       - run: node tools/build-pages.mjs

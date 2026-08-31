@@ -6,10 +6,13 @@
  *   - type 'words': a curated word list drawn at random
  *   - type 'text' : a fixed paragraph typed verbatim
  *
- * Each keyboard layout points at a course (see `course` in keyboard-layout.js).
+ * A course belongs to a language, not to a keyboard: the English one can be
+ * practised on a Spanish board, but the Spanish one is full of ñ and accents
+ * that a US board simply cannot type, which is what `courseFitsLayout` is for.
  * Lesson ids are unique across courses so progress never collides.
  */
 
+import { keyStepsFor } from './keyboard-layout.js';
 import { BLOCKS_ES, LESSONS_ES } from './lessons-es.js';
 import { BLOCKS_EN, LESSONS_EN } from './lessons-en.js';
 
@@ -42,6 +45,28 @@ export function courseOfLesson(id) {
 
 export function lessonsOfBlock(course, blockId) {
   return course.lessons.filter((lesson) => lesson.block === blockId);
+}
+
+const characters = new Map();
+
+/** Every character the exercises of a course can ask for, space included. */
+export function courseCharacters(course) {
+  let set = characters.get(course.id);
+  if (set) return set;
+
+  set = new Set(' ');
+  for (const lesson of course.lessons) {
+    for (const source of [lesson.text ?? '', ...(lesson.words ?? []), ...(lesson.keys ?? []), ...(lesson.review ?? [])]) {
+      for (const char of source) set.add(char);
+    }
+  }
+  characters.set(course.id, set);
+  return set;
+}
+
+/** Whether a keyboard can type every exercise of a course. */
+export function courseFitsLayout(course, layout) {
+  return [...courseCharacters(course)].every((char) => keyStepsFor(char, layout));
 }
 
 const TARGET_LENGTH = 190;
