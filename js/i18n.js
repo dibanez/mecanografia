@@ -24,6 +24,12 @@ export const DEFAULT_LANGUAGE = 'es';
 /** Chrome of the application. Page copy lives in i18n-copy.js. */
 const CHROME = {
   es: {
+    'route.tutorial': '#/tutorial',
+    'route.lessons': '#/lecciones',
+    'route.practice': '#/practica',
+    'route.free': '#/libre',
+    'route.freeText': '#/libre/texto',
+    'route.progress': '#/progreso',
     'nav.tutorial': 'Tutorial',
     'nav.lessons': 'Lecciones',
     'nav.free': 'Práctica libre',
@@ -119,6 +125,18 @@ const CHROME = {
     'finger.short.right': ' der.',
   },
   en: {
+    'route.tutorial': '#/tutorial',
+    'route.lessons': '#/lecciones',
+    'route.practice': '#/practica',
+    'route.free': '#/libre',
+    'route.freeText': '#/libre/texto',
+    'route.progress': '#/progreso',
+    'route.tutorial': '#/tutorial',
+    'route.lessons': '#/lessons',
+    'route.practice': '#/practice',
+    'route.free': '#/free',
+    'route.freeText': '#/free/text',
+    'route.progress': '#/progress',
     'nav.tutorial': 'Tutorial',
     'nav.lessons': 'Lessons',
     'nav.free': 'Free practice',
@@ -228,6 +246,34 @@ function format(value, params) {
   return value.replace(/\{(\w+)\}/g, (match, name) => (name in params ? String(params[name]) : match));
 }
 
+/** Views the hash router can name, each with a route.* entry per language. */
+const ROUTE_VIEWS = ['tutorial', 'lessons', 'practice', 'free', 'progress'];
+
+const sectionOf = (languageId, view) =>
+  (DICTIONARIES[languageId][`route.${view}`] ?? '').replace(/^#\//, '').split('/')[0];
+
+/**
+ * View a hash section names. Every language is understood everywhere, so a
+ * link shared from one page still opens on another.
+ */
+export function viewOfSection(section) {
+  if (!section) return null;
+  for (const { id } of LANGUAGES) {
+    for (const view of ROUTE_VIEWS) {
+      if (sectionOf(id, view) === section) return view;
+    }
+  }
+  return null;
+}
+
+/** The same hash written in another language, to keep it across a switch. */
+export function translateHash(hash, languageId) {
+  const [section, ...rest] = hash.replace(/^#\//, '').split('/');
+  const view = viewOfSection(section);
+  if (!view) return hash;
+  return [`#/${sectionOf(languageId, view)}`, ...rest].join('/');
+}
+
 /**
  * Language a published page is written in, taken from its directory: the root
  * is Spanish and every other language lives in a folder of its own (/en/).
@@ -242,7 +288,7 @@ export function pageLanguage() {
 export function urlForLanguage(id) {
   let path = location.pathname.replace(/[^/]*\.html$/, '');
   if (pageLanguage() !== DEFAULT_LANGUAGE) path = path.replace(/[^/]+\/$/, '');
-  return `${path}${id === DEFAULT_LANGUAGE ? '' : `${id}/`}${location.hash}`;
+  return `${path}${id === DEFAULT_LANGUAGE ? '' : `${id}/`}${translateHash(location.hash, id)}`;
 }
 
 export function getLanguage() {

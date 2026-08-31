@@ -18,6 +18,12 @@ export const COPY = {
     'meta.ogDescription':
       'Curso gratuito de mecanografía para teclado español e inglés: tutorial de colocación de ' +
       'dedos, 31 lecciones progresivas, teclado en pantalla y estadísticas de velocidad.',
+    'og.pageTitle': 'Mecanografía — tarjeta de vista previa',
+    'og.headline': 'Aprende a escribir sin mirar el teclado',
+    'og.blurb': 'Curso gratuito con teclado español e inglés, 31 lecciones y estadísticas.',
+    'og.homeKey': 'Ñ',
+    'og.url': 'dibanez.github.io/mecanografia',
+    'og.badges': 'gratis · sin cuentas · sin anuncios',
 
     /* ------------------------------------------------------------ tutorial */
     'tutorial.title': 'Cómo empezar a mecanografiar',
@@ -234,6 +240,12 @@ export const COPY = {
     'meta.ogDescription':
       'Free touch typing course for the Spanish and English keyboard: finger placement tutorial, ' +
       '31 progressive lessons, on-screen keyboard and speed statistics.',
+    'og.pageTitle': 'Mecanografía — link preview card',
+    'og.headline': 'Learn to type without looking at the keyboard',
+    'og.blurb': 'Free course for the Spanish and English keyboard, 31 lessons and statistics.',
+    'og.homeKey': ';',
+    'og.url': 'dibanez.github.io/mecanografia/en',
+    'og.badges': 'free · no accounts · no ads',
 
     /* ------------------------------------------------------------ tutorial */
     'tutorial.title': 'How to start touch typing',

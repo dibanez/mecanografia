@@ -102,7 +102,7 @@ export class TypingEngine {
   }
 }
 
-/** 0-3 stars from accuracy and speed against the lesson target. */
+/** 1-3 stars from accuracy and speed against the lesson target. */
 export function ratingFor({ wpm, accuracy }, targetWpm) {
   if (accuracy < 85) return 1;
   if (accuracy >= 97 && wpm >= targetWpm) return 3;

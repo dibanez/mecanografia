@@ -33,6 +33,7 @@ import {
   getLanguage,
   localized,
   pageLanguage,
+  viewOfSection,
   setLanguage,
   t,
   translator,
@@ -133,7 +134,7 @@ function applyLayout(layoutId, { rerender = true } = {}) {
   if (!rerender) return;
 
   // A lesson from the previous course no longer applies to this keyboard.
-  if (app.lesson && !app.lesson.custom) location.hash = '#/lecciones';
+  if (app.lesson && !app.lesson.custom) location.hash = t('route.lessons');
   else route();
 }
 
@@ -220,10 +221,13 @@ function showView(name) {
 function route() {
   const hash = location.hash.replace(/^#\/?/, '');
   const [section, param] = hash.split('/');
+  // Sections are named in every published language, so a link shared from one
+  // page opens the same view on the other.
+  const view = viewOfSection(section);
 
   stopPractice();
 
-  if (section === 'practica' && param) {
+  if (view === 'practice' && param) {
     const course = courseOfLesson(param);
     const lesson = course ? getLesson(param) : null;
     if (lesson) {
@@ -237,20 +241,20 @@ function route() {
       return;
     }
   }
-  if (section === 'tutorial') {
+  if (view === 'tutorial') {
     renderTutorial();
     showView('tutorial');
     return;
   }
-  if (section === 'libre') {
-    if (param === 'texto' && app.freeText) {
+  if (view === 'free') {
+    if (param && app.freeText) {
       startFreePractice(app.freeText);
       return;
     }
     showView('free');
     return;
   }
-  if (section === 'progreso') {
+  if (view === 'progress') {
     renderProgress();
     showView('progress');
     return;
@@ -332,7 +336,7 @@ function initTutorial() {
   });
 
   $('#tutorial-start').addEventListener('click', () => {
-    location.hash = `#/practica/${app.course.lessons[0].id}`;
+    location.hash = `${t('route.practice')}/${app.course.lessons[0].id}`;
   });
 }
 
@@ -396,7 +400,7 @@ function renderLessons() {
 
   container.onclick = (event) => {
     const card = event.target.closest('[data-lesson]');
-    if (card) location.hash = `#/practica/${card.dataset.lesson}`;
+    if (card) location.hash = `${t('route.practice')}/${card.dataset.lesson}`;
   };
 }
 
@@ -804,13 +808,13 @@ function init() {
   });
 
   $('#continue-button').addEventListener('click', () => {
-    location.hash = `#/practica/${nextPendingLesson().id}`;
+    location.hash = `${t('route.practice')}/${nextPendingLesson().id}`;
   });
 
   $('#restart-button').addEventListener('click', restartLesson);
   $('#next-button').addEventListener('click', () => {
     const next = nextLessonAfter(app.lesson.id);
-    if (next) location.hash = `#/practica/${next.id}`;
+    if (next) location.hash = `${t('route.practice')}/${next.id}`;
   });
 
   $('#typing').addEventListener('click', () => app.input?.focus());
@@ -822,7 +826,7 @@ function init() {
   $('#result-next').addEventListener('click', () => {
     $('#result-dialog').close();
     const next = nextLessonAfter(app.lesson.id);
-    if (next) location.hash = `#/practica/${next.id}`;
+    if (next) location.hash = `${t('route.practice')}/${next.id}`;
   });
   $('#result-dialog').addEventListener('close', () => app.input?.focus());
 
@@ -847,8 +851,8 @@ function init() {
     }
 
     app.freeText = text;
-    if (location.hash === '#/libre/texto') startFreePractice(text);
-    else location.hash = '#/libre/texto';
+    if (location.hash === t('route.freeText')) startFreePractice(text);
+    else location.hash = t('route.freeText');
   });
 
   initShare();

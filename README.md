@@ -93,7 +93,12 @@ comprueba que los ejercicios se pueden teclear:
 ```sh
 node tools/build-pages.mjs
 node tools/check-exercises.mjs
+node --test
 ```
+
+`node --test` cubre `js/engine.js`: el modo estricto, el retroceso, las ppm
+netas y brutas, la precisión, las teclas que más fallas y las estrellas. No
+necesita instalar nada, es el ejecutor de pruebas de Node.
 
 No hace falta instalar nada: es Node pelado, sin dependencias. El script llena
 los elementos con `data-i18n` en los dos idiomas, escribe la cabecera entre los
@@ -126,7 +131,9 @@ Las dos se enlazan entre sí con `hreflang` recíprocos, declaran su `canonical`
 aparecen en `sitemap.xml`. Elegir idioma en los ajustes **navega** a la otra
 página en lugar de traducir en caliente, para que la dirección nunca mienta
 sobre lo que se está viendo, y el enlace de compartir sale ya con el idioma en
-uso. El progreso se guarda por origen, así que sobrevive al cambio de idioma.
+uso. Las rutas también están traducidas (`#/lecciones` ↔ `#/lessons`), y cada
+página entiende las de todos los idiomas, así que un enlace compartido sigue
+abriendo donde debe aunque venga de la otra. El progreso se guarda por origen, así que sobrevive al cambio de idioma.
 
 Quien llega a la raíz con el navegador en otro idioma publicado **no** es
 redirigido: se le ofrece un enlace discreto en la barra superior, escrito en ese
@@ -137,10 +144,19 @@ en sentido contrario, así que no hay bucles posibles.
 
 ## Vista previa del enlace
 
-Las etiquetas Open Graph apuntan a `https://dibanez.github.io/mecanografia/` y a
-`og.png` con **URL absoluta**, que es lo que exigen las redes sociales. La
-dirección del sitio está en la constante `SITE` de `tools/build-pages.mjs`: si
-mueves el sitio a otro dominio, cámbiala ahí y regenera.
+Cada idioma tiene su propia tarjeta: `og.png` en la raíz y `en/og.png`, y cada
+página apunta a la suya. La española lleva la Ñ en la fila guía y la inglesa el
+`;`, que es la tecla que ocupa ese sitio en su teclado.
+
+Las etiquetas Open Graph usan **URL absoluta**, que es lo que exigen las redes
+sociales. La dirección del sitio está en la constante `SITE` de
+`tools/build-pages.mjs`: si mueves el sitio a otro dominio, cámbiala ahí y
+regenera.
+
+Los textos de la tarjeta salen del diccionario (claves `og.*`), así que
+`node tools/build-pages.mjs` escribe `og.html` y `en/og.html`. Las imágenes se
+regeneran a mano: abre cada una a 1200 × 630 y guarda la captura junto a ella
+como `og.png`.
 
 La tarjeta `og.png` (1200 × 630) se genera abriendo `og.html` a ese tamaño y
 guardando la captura en la raíz del repositorio.
@@ -187,6 +203,7 @@ en/index.html               página en inglés (generada)
 sitemap.xml / robots.txt    indexación (generados)
 tools/build-pages.mjs       genera una página por idioma, sin dependencias
 tools/check-exercises.mjs   comprueba que todo ejercicio se puede teclear
+test/engine.test.mjs        pruebas del motor de escritura (node --test)
 css/styles.css              estilos y temas claro/oscuro
 js/app.js                   enrutado, bucle de práctica, tutorial y progreso
 js/engine.js                motor de escritura y cálculo de ppm/precisión
@@ -196,7 +213,7 @@ js/i18n-copy.js             textos de la página en español e inglés
 js/storage.js               persistencia en localStorage
 js/consent.js               aviso de cookies y modo de consentimiento
 js/share.js                 compartir en redes sociales
-og.html / og.png            tarjeta de vista previa del enlace
+og.html / og.png            tarjeta de vista previa, una por idioma (generadas)
 js/data/lessons.js          cursos, búsquedas y generador de ejercicios
 js/data/lessons-es.js       temario del teclado español
 js/data/lessons-en.js       temario del teclado inglés

@@ -52,7 +52,7 @@ ${alternates}
     <meta property="og:title" content="${escapeHtml(t('meta.title'))}" />
     <meta property="og:description" content="${escapeHtml(t('meta.ogDescription'))}" />
     <meta property="og:url" content="${urlFor(language)}" />
-    <meta property="og:image" content="${SITE}og.png" />
+    <meta property="og:image" content="${urlFor(language)}og.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="${t('meta.locale')}" />
@@ -130,18 +130,24 @@ ${entries}
 `;
 }
 
+/** Pages built for every language: the application and its preview card. */
+const SOURCES = ['index.html', 'og.html'];
+
 async function main() {
-  const source = await readFile(join(ROOT, 'index.html'), 'utf8');
-  if (!source.includes('<!-- i18n:head')) {
+  const sources = new Map();
+  for (const name of SOURCES) sources.set(name, await readFile(join(ROOT, name), 'utf8'));
+  if (!sources.get('index.html').includes('<!-- i18n:head')) {
     throw new Error('index.html has no i18n:head block to generate');
   }
 
   for (const { id } of LANGUAGES) {
-    const page = buildPage(source, id);
-    const target = id === DEFAULT_LANGUAGE ? join(ROOT, 'index.html') : join(ROOT, id, 'index.html');
-    await mkdir(dirname(target), { recursive: true });
-    await writeFile(target, page);
-    console.log(`wrote ${target.replace(ROOT + '/', '')}`);
+    for (const [name, source] of sources) {
+      const page = buildPage(source, id);
+      const target = id === DEFAULT_LANGUAGE ? join(ROOT, name) : join(ROOT, id, name);
+      await mkdir(dirname(target), { recursive: true });
+      await writeFile(target, page);
+      console.log(`wrote ${target.replace(ROOT + '/', '')}`);
+    }
   }
 
   await writeFile(join(ROOT, 'sitemap.xml'), sitemap());
