@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://dibanez.github.io/mecanografia/sitemap.xml

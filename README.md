@@ -12,9 +12,11 @@ compilación ni dependencias: es HTML, CSS y JavaScript con módulos ES nativos.
 - **Configurador (⚙ en la barra superior)**: idioma de la interfaz, distribución
   del teclado y tipo de teclado físico, con una vista previa en vivo. Todo se
   recuerda en `localStorage`.
-- **Interfaz en español e inglés**, independiente de la distribución: puedes
-  practicar el teclado español con la interfaz en inglés o al revés. La primera
-  visita usa el idioma del navegador.
+- **Una página por idioma**: español en la raíz e inglés en `/en/`, cada una con
+  su `<title>`, su descripción, su Open Graph y su `hreflang`, y las dos
+  pregeneradas para que un buscador las lea sin ejecutar JavaScript. El idioma
+  es independiente de la distribución: puedes practicar el teclado español con
+  la interfaz en inglés o al revés.
 - **Cuatro distribuciones**: español (ISO), inglés US (ANSI), inglés UK (ISO) e
   inglés UK de Apple. La distribución decide qué carácter da cada tecla y con
   ella el temario. La británica de Apple no es la de Windows: la `@` está en
@@ -80,8 +82,23 @@ Al usar módulos ES hace falta servirlo por HTTP (abrir el `index.html` con
 
 ```sh
 python3 -m http.server 8000
-# http://localhost:8000
+# http://localhost:8000        español
+# http://localhost:8000/en/    inglés
 ```
+
+Después de tocar el marcado de `index.html` o los textos de `js/i18n-copy.js`,
+regenera las páginas:
+
+```sh
+node tools/build-pages.mjs
+```
+
+No hace falta instalar nada: es Node pelado, sin dependencias. El script llena
+los elementos con `data-i18n` en los dos idiomas, escribe la cabecera entre los
+marcadores `i18n:head`, genera `en/index.html` con las rutas de `css/` y `js/`
+ajustadas, y actualiza `sitemap.xml` y `robots.txt`. Es idempotente, así que
+correrlo dos veces no cambia nada. El workflow de Pages lo ejecuta también al
+desplegar, por si se te olvida.
 
 ## Publicar en GitHub Pages
 
@@ -93,11 +110,35 @@ Como alternativa, en **Settings → Pages** puedes elegir *Deploy from a branch*
 (`main`, carpeta `/root`): el archivo `.nojekyll` ya está incluido para que Jekyll
 no interfiera.
 
+## Idiomas y buscadores
+
+Cada idioma es una URL propia, que es lo que necesitan tanto los buscadores como
+quien comparte un enlace:
+
+| URL | Idioma |
+| --- | --- |
+| `https://dibanez.github.io/mecanografia/` | español (canónica y `x-default`) |
+| `https://dibanez.github.io/mecanografia/en/` | inglés |
+
+Las dos se enlazan entre sí con `hreflang` recíprocos, declaran su `canonical` y
+aparecen en `sitemap.xml`. Elegir idioma en los ajustes **navega** a la otra
+página en lugar de traducir en caliente, para que la dirección nunca mienta
+sobre lo que se está viendo, y el enlace de compartir sale ya con el idioma en
+uso. El progreso se guarda por origen, así que sobrevive al cambio de idioma.
+
+Quien llega a la raíz con el navegador en otro idioma publicado **no** es
+redirigido: se le ofrece un enlace discreto en la barra superior, escrito en ese
+idioma. Redirigir por `Accept-Language` es justo lo que Google desaconseja, y
+además le impediría indexar la versión española. La única redirección que
+existe va de la raíz a `/en/`, y solo si el visitante eligió inglés antes; nunca
+en sentido contrario, así que no hay bucles posibles.
+
 ## Vista previa del enlace
 
-Las etiquetas Open Graph de `index.html` apuntan a `https://dibanez.github.io/mecanografia/`
-y a `og.png` con **URL absoluta**, que es lo que exigen las redes sociales: si
-mueves el sitio a otro dominio hay que cambiarlas.
+Las etiquetas Open Graph apuntan a `https://dibanez.github.io/mecanografia/` y a
+`og.png` con **URL absoluta**, que es lo que exigen las redes sociales. La
+dirección del sitio está en la constante `SITE` de `tools/build-pages.mjs`: si
+mueves el sitio a otro dominio, cámbiala ahí y regenera.
 
 La tarjeta `og.png` (1200 × 630) se genera abriendo `og.html` a ese tamaño y
 guardando la captura en la raíz del repositorio.
@@ -139,7 +180,10 @@ las dispares con activadores que ignoren el estado del consentimiento.
 ## Estructura
 
 ```
-index.html                  vistas: tutorial, lecciones, práctica, libre, progreso
+index.html                  marcado y página en español (generada)
+en/index.html               página en inglés (generada)
+sitemap.xml / robots.txt    indexación (generados)
+tools/build-pages.mjs       genera una página por idioma, sin dependencias
 css/styles.css              estilos y temas claro/oscuro
 js/app.js                   enrutado, bucle de práctica, tutorial y progreso
 js/engine.js                motor de escritura y cálculo de ppm/precisión
@@ -200,6 +244,8 @@ teclas: los caracteres que no estén dibujados iluminan la tecla con
 
 Añade el idioma a `LANGUAGES` en `js/i18n.js`, traduce los diccionarios de
 `js/i18n.js` (cromo y nombres de teclas) y `js/i18n-copy.js` (textos de la
-página), y añade la clave a los títulos `{ es, en }` de los temarios. El marcado
-se traduce solo mediante los atributos `data-i18n`, `data-i18n-html` y
-`data-i18n-attr` de `index.html`.
+página, incluidas las claves `meta.*` del `<title>` y la descripción), y añade
+la clave a los títulos `{ es, en }` de los temarios. El marcado se traduce solo
+mediante los atributos `data-i18n`, `data-i18n-html` y `data-i18n-attr` de
+`index.html`. Al ejecutar `node tools/build-pages.mjs` aparecen su carpeta
+`/<idioma>/`, sus `hreflang` y su entrada en el sitemap sin tocar nada más.

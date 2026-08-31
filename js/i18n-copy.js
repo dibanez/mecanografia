@@ -7,6 +7,18 @@
 
 export const COPY = {
   es: {
+    /* ---------------------------------------------------- page and preview */
+    'meta.locale': 'es_ES',
+    'language.switch': 'Leer en español',
+    'meta.title': 'Mecanografía — aprende a escribir sin mirar',
+    'meta.description':
+      'Curso de mecanografía para teclado español e inglés: tutorial de colocación de dedos, ' +
+      '31 lecciones progresivas por distribución, once tipos de teclado en pantalla y ' +
+      'estadísticas de velocidad y precisión.',
+    'meta.ogDescription':
+      'Curso gratuito de mecanografía para teclado español e inglés: tutorial de colocación de ' +
+      'dedos, 31 lecciones progresivas, teclado en pantalla y estadísticas de velocidad.',
+
     /* ------------------------------------------------------------ tutorial */
     'tutorial.title': 'Cómo empezar a mecanografiar',
     'tutorial.intro':
@@ -208,6 +220,18 @@ export const COPY = {
   },
 
   en: {
+    /* ---------------------------------------------------- page and preview */
+    'meta.locale': 'en_GB',
+    'language.switch': 'Read in English',
+    'meta.title': 'Mecanografía — learn to type without looking',
+    'meta.description':
+      'Touch typing course for the Spanish and English keyboard: finger placement tutorial, ' +
+      '31 progressive lessons per layout, eleven on-screen keyboard types and speed and ' +
+      'accuracy statistics.',
+    'meta.ogDescription':
+      'Free touch typing course for the Spanish and English keyboard: finger placement tutorial, ' +
+      '31 progressive lessons, on-screen keyboard and speed statistics.',
+
     /* ------------------------------------------------------------ tutorial */
     'tutorial.title': 'How to start touch typing',
     'tutorial.intro':

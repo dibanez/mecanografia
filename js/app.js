@@ -23,13 +23,17 @@ import {
 } from './data/lessons.js';
 import { TypingEngine, ratingFor } from './engine.js';
 import {
+  DEFAULT_LANGUAGE,
   LANGUAGES,
   applyTranslations,
   detectLanguage,
   getLanguage,
   localized,
+  pageLanguage,
   setLanguage,
   t,
+  translator,
+  urlForLanguage,
 } from './i18n.js';
 import { KeyboardView } from './keyboard.js';
 import { initShare, openShare } from './share.js';
@@ -126,18 +130,42 @@ function applyForm(formId) {
   rebuildKeyboard();
 }
 
-function applyLanguage(languageId, { rerender = true } = {}) {
-  setLanguage(languageId);
-  app.settings = store.saveSettings({ language: getLanguage() });
-  applyTranslations();
-  fillSelects();
-  $('#setting-form-note').textContent = t(`form.${app.form.id}.note`);
-  updateAppleNote();
-  // Hand labels and key names are drawn, not markup: they need a repaint.
-  app.view?.render();
-  app.tutorialView?.render();
-  app.settingsView?.render();
-  if (rerender) route();
+/**
+ * Every language is published as its own page, so switching is a navigation
+ * and the address always tells the truth about what is on screen.
+ */
+function applyLanguage(languageId) {
+  app.settings = store.saveSettings({ language: languageId });
+  if (languageId === getLanguage()) return;
+  location.href = urlForLanguage(languageId);
+}
+
+/**
+ * The URL decides the language. Only the root sends anyone away, and only to
+ * a language they chose themselves: search engines index each page as its own
+ * language, and redirecting them by browser settings would fight that.
+ */
+function redirectToChosenLanguage() {
+  if (pageLanguage() !== DEFAULT_LANGUAGE) return false;
+  const chosen = app.settings.language;
+  if (!chosen || chosen === DEFAULT_LANGUAGE) return false;
+  if (!LANGUAGES.some((language) => language.id === chosen)) return false;
+  location.replace(urlForLanguage(chosen));
+  return true;
+}
+
+/** Offers, in its own words, the language the browser asks for. */
+function offerBrowserLanguage() {
+  const link = $('#language-offer');
+  const preferred = detectLanguage();
+  const offer = !app.settings.language && preferred !== getLanguage();
+  link.hidden = !offer;
+  if (!offer) return;
+
+  link.textContent = translator(preferred)('language.switch');
+  link.href = urlForLanguage(preferred);
+  link.hreflang = preferred;
+  link.addEventListener('click', () => store.saveSettings({ language: preferred }));
 }
 
 function applyDisplaySettings() {
@@ -729,9 +757,12 @@ function initSettings() {
 /* ------------------------------------------------------------------ init */
 
 function init() {
+  if (redirectToChosenLanguage()) return;
+
   applyTheme(app.settings.theme);
-  setLanguage(app.settings.language ?? detectLanguage());
+  setLanguage(pageLanguage());
   applyTranslations();
+  offerBrowserLanguage();
 
   app.layout = getLayout(app.settings.layout);
   app.form = getForm(app.settings.form);

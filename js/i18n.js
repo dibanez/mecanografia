@@ -222,13 +222,37 @@ const DICTIONARIES = {
 
 let current = DEFAULT_LANGUAGE;
 
+/** Replaces {placeholders} in a dictionary value. */
+function format(value, params) {
+  if (!params) return value;
+  return value.replace(/\{(\w+)\}/g, (match, name) => (name in params ? String(params[name]) : match));
+}
+
+/**
+ * Language a published page is written in, taken from its directory: the root
+ * is Spanish and every other language lives in a folder of its own (/en/).
+ */
+export function pageLanguage() {
+  const segments = location.pathname.split('/').filter((part) => part && !part.endsWith('.html'));
+  const last = segments.pop();
+  return last && last in DICTIONARIES ? last : DEFAULT_LANGUAGE;
+}
+
+/** URL of this same view in another language. */
+export function urlForLanguage(id) {
+  let path = location.pathname.replace(/[^/]*\.html$/, '');
+  if (pageLanguage() !== DEFAULT_LANGUAGE) path = path.replace(/[^/]+\/$/, '');
+  return `${path}${id === DEFAULT_LANGUAGE ? '' : `${id}/`}${location.hash}`;
+}
+
 export function getLanguage() {
   return current;
 }
 
 export function setLanguage(id) {
   current = DICTIONARIES[id] ? id : DEFAULT_LANGUAGE;
-  document.documentElement.lang = current;
+  // The page build imports this module without a DOM.
+  if (typeof document !== 'undefined') document.documentElement.lang = current;
   return current;
 }
 
@@ -244,9 +268,14 @@ export function detectLanguage() {
 
 /** Translates `key`, replacing {placeholders} with `params`. */
 export function t(key, params) {
-  const value = DICTIONARIES[current][key] ?? DICTIONARIES[DEFAULT_LANGUAGE][key] ?? key;
-  if (!params) return value;
-  return value.replace(/\{(\w+)\}/g, (match, name) => (name in params ? String(params[name]) : match));
+  return translator(current)(key, params);
+}
+
+/** Lookup for a language other than the active one, used to build the pages. */
+export function translator(languageId) {
+  const dictionary = DICTIONARIES[languageId] ?? DICTIONARIES[DEFAULT_LANGUAGE];
+  return (key, params) =>
+    format(dictionary[key] ?? DICTIONARIES[DEFAULT_LANGUAGE][key] ?? key, params);
 }
 
 /** Whether the dictionary carries `key`, to tell a label from a missing one. */

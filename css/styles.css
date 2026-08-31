@@ -500,6 +500,21 @@ textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 .select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .topbar__actions { display: flex; align-items: center; gap: 0.5rem; }
 
+/* Offer of another published language; never an automatic redirect. */
+.language-offer {
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.language-offer:hover { border-color: var(--accent); color: var(--accent); }
+.language-offer[hidden] { display: none; }
+@media (max-width: 640px) { .language-offer { display: none; } }
+
 /* -------------------------------------------------------------- tutorial */
 .steps { list-style: none; counter-reset: step; margin: 0 0 1.5rem; padding: 0; }
 .step {
