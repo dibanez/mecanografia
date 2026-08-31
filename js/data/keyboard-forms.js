@@ -552,9 +552,10 @@ export const FORMS = {
     id: 'laptopNumpad',
     sections: (layout) => [laptopSection(layout), numpadSection(layout)],
   },
-  mac: { id: 'mac', sections: (layout) => [macSection(layout)] },
+  mac: { id: 'mac', apple: true, sections: (layout) => [macSection(layout)] },
   macNumpad: {
     id: 'macNumpad',
+    apple: true,
     sections: (layout) => [macSection(layout), numpadSection(layout)],
   },
   split: { id: 'split', split: true, sections: splitSections },

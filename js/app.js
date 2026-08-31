@@ -2,6 +2,7 @@
 
 import {
   FINGERS,
+  LAYOUTS,
   LAYOUT_LIST,
   defaultLayoutForCourse,
   getLayout,
@@ -83,6 +84,17 @@ function applyTheme(theme) {
 
 /* ------------------------------------------------ layout, shape, language */
 
+/**
+ * Apple boards do not always type what the Windows layout of the same country
+ * types, so point at the matching variant instead of teaching the wrong key.
+ */
+function updateAppleNote() {
+  const variant = app.form.apple ? LAYOUTS[app.layout.appleVariant] : null;
+  const note = $('#setting-apple-note');
+  note.hidden = !variant;
+  if (variant) note.textContent = t('settings.appleNote', { name: variant.name });
+}
+
 /** Rebuilds the drawn keyboard shared by practice, tutorial and settings. */
 function rebuildKeyboard() {
   app.keyboard = buildKeyboard(app.layout, app.form.id);
@@ -90,6 +102,7 @@ function rebuildKeyboard() {
   app.tutorialView?.setKeyboard(app.keyboard);
   app.settingsView?.setKeyboard(app.keyboard);
   $('#setting-layer-note').hidden = !app.keyboard.layerCodes.length || !app.form.layered;
+  updateAppleNote();
 }
 
 /** Switches keyboard layout, which also switches the course of lessons. */
@@ -119,6 +132,7 @@ function applyLanguage(languageId, { rerender = true } = {}) {
   applyTranslations();
   fillSelects();
   $('#setting-form-note').textContent = t(`form.${app.form.id}.note`);
+  updateAppleNote();
   // Hand labels and key names are drawn, not markup: they need a repaint.
   app.view?.render();
   app.tutorialView?.render();
@@ -729,6 +743,7 @@ function init() {
   initSettings();
   applyDisplaySettings();
   $('#setting-layer-note').hidden = !app.keyboard.layerCodes.length || !app.form.layered;
+  updateAppleNote();
 
   $('#theme-toggle').addEventListener('click', () => {
     applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');

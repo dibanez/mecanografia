@@ -162,6 +162,20 @@ const UK_KEYS = {
   IntlBackslash: { base: '\\', shift: '|' },
 };
 
+/**
+ * Apple's British layout, which is not the Windows one: it is the US block
+ * with £ and §, so @ and " swap places and # moves behind option.
+ * Taken from the XKB description in macintosh_vndr/gb.
+ */
+const UK_MAC_KEYS = {
+  ...US_KEYS,
+  Backquote: { base: '§', shift: '±' },
+  // macOS also types € with option+E, but the euro is engraved on the 2 key.
+  Digit2: { base: '2', shift: '@', altgr: '€' },
+  Digit3: { base: '3', shift: '£', altgr: '#' },
+  IntlBackslash: { base: '`', shift: '~' },
+};
+
 /** Dead key + following letter combinations reachable on the Spanish layout. */
 const SPANISH_DEAD = {
   Quote: {
@@ -190,7 +204,11 @@ export const LAYOUTS = {
   },
   uk: {
     id: 'uk', name: 'English (UK)', short: 'UK', course: 'en',
-    physical: 'iso', keys: UK_KEYS, dead: {},
+    physical: 'iso', keys: UK_KEYS, dead: {}, appleVariant: 'uk-mac',
+  },
+  'uk-mac': {
+    id: 'uk-mac', name: 'English (UK, Mac)', short: 'UK-Mac', course: 'en',
+    physical: 'iso', keys: UK_MAC_KEYS, dead: {}, apple: true,
   },
 };
 

@@ -36,6 +36,9 @@ const CHROME = {
     'settings.layout': 'Distribución del teclado',
     'settings.layoutHint':
       'La distribución decide qué carácter da cada tecla y con ella el temario: teclado español o inglés.',
+    'settings.appleNote':
+      'Este teclado tiene distribución propia en Mac: elige «{name}» para que la @, las comillas ' +
+      'y la almohadilla caigan donde de verdad están.',
     'settings.form': 'Tipo de teclado',
     'settings.formHint': 'Solo cambia el dibujo y, en los partidos, qué dedo toca cada tecla.',
     'settings.layerNote':
@@ -128,6 +131,9 @@ const CHROME = {
     'settings.layout': 'Keyboard layout',
     'settings.layoutHint':
       'The layout decides which character each key types, and with it the course: Spanish or English keyboard.',
+    'settings.appleNote':
+      'This keyboard has its own layout on the Mac: pick “{name}” so that @, the quotes and the ' +
+      'hash land where they really are.',
     'settings.form': 'Keyboard type',
     'settings.formHint': 'Only changes the drawing and, on split boards, which finger owns each key.',
     'settings.layerNote':

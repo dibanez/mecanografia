@@ -15,8 +15,10 @@ compilación ni dependencias: es HTML, CSS y JavaScript con módulos ES nativos.
 - **Interfaz en español e inglés**, independiente de la distribución: puedes
   practicar el teclado español con la interfaz en inglés o al revés. La primera
   visita usa el idioma del navegador.
-- **Tres distribuciones**: español (ISO), inglés US (ANSI) e inglés UK (ISO). La
-  distribución decide qué carácter da cada tecla y con ella el temario.
+- **Cuatro distribuciones**: español (ISO), inglés US (ANSI), inglés UK (ISO) e
+  inglés UK de Apple. La distribución decide qué carácter da cada tecla y con
+  ella el temario. La británica de Apple no es la de Windows: la `@` está en
+  ⇧2 y las comillas en ⇧', al revés que en el PC, y la `#` va en ⌥3.
 - **Once tipos de teclado físico**: completo con numérico, TKL, 75 %, 60 %,
   portátil, portátil con numérico, Mac (Magic Keyboard), Mac con numérico,
   partido clásico (Sculpt, Freestyle), partido columnar (ErgoDox, Moonlander,
@@ -27,8 +29,8 @@ compilación ni dependencias: es HTML, CSS y JavaScript con módulos ES nativos.
 - En los tipos **Mac** las teclas llevan las serigrafías de Apple (⌘ command,
   ⌥ option, ⌃ control, ⇪, ⇥, ↩, ⌫, fn) y el tercer nivel se pulsa con ⌥ option
   en vez de AltGr: macOS manda `AltRight` para option, así que el resaltado es
-  el mismo. Ojo: el mapa de caracteres sigue siendo el de Windows, y en algunas
-  distribuciones Apple cambia qué símbolos hay tras option.
+  el mismo. Al elegir un tipo Mac, si la distribución activa tiene variante
+  Apple los ajustes lo avisan y sugieren cambiarse (campo `appleVariant`).
 - **31 lecciones progresivas por idioma**, repartidas en 7 bloques: fila guía →
   fila superior → fila inferior → tildes y diéresis (o ritmo en inglés: palabras y
   combinaciones frecuentes) → mayúsculas y puntuación → números y símbolos →
@@ -151,7 +153,7 @@ og.html / og.png            tarjeta de vista previa del enlace
 js/data/lessons.js          cursos, búsquedas y generador de ejercicios
 js/data/lessons-es.js       temario del teclado español
 js/data/lessons-en.js       temario del teclado inglés
-js/data/keyboard-layout.js  distribuciones ES/US/UK: qué carácter da cada tecla
+js/data/keyboard-layout.js  distribuciones ES/US/UK/UK-Mac: qué carácter da cada tecla
 js/data/keyboard-forms.js   formas físicas: sobremesa, portátil, Mac, partidos, ortolineal
 ```
 
