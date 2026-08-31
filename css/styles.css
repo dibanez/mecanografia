@@ -278,39 +278,48 @@ textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 
 /* ---------------------------------------------------- keyboard and hands */
 .guide { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.2rem; }
-@media (min-width: 900px) { .guide { grid-template-columns: 210px minmax(0, 1fr); align-items: center; } }
+@media (min-width: 900px) {
+  .guide { grid-template-columns: 210px minmax(0, 1fr); align-items: center; }
+  /* With the hands hidden the board takes the whole width instead of a gap. */
+  .guide:has(.hands[hidden]) { grid-template-columns: minmax(0, 1fr); }
+}
 
 .keyboard {
   --key-unit: 40px;
   display: flex;
   align-items: flex-start;
-  gap: 16px;
+  gap: calc(var(--key-unit) * 0.4);
   background: var(--bg-elevated);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 10px;
+  padding: calc(var(--key-unit) * 0.25);
+  /* A last resort: the view fits the board to its width before this bites. */
   overflow-x: auto;
 }
 .keyboard[hidden], .hands[hidden] { display: none; }
 
 .keyboard__section { flex: 0 0 auto; display: flex; flex-direction: column; }
-.keyboard__lines { display: flex; flex-direction: column; gap: 5px; }
-.keyboard__row { display: flex; gap: 5px; }
-.keyboard__column { display: flex; flex-direction: column; gap: 5px; }
+.keyboard__lines { display: flex; flex-direction: column; gap: calc(var(--key-unit) * 0.125); }
+.keyboard__row { display: flex; gap: calc(var(--key-unit) * 0.125); }
+.keyboard__column { display: flex; flex-direction: column; gap: calc(var(--key-unit) * 0.125); }
 
 /* Columnar boards stagger each column by the length of its finger. */
-.keyboard__section--columns .keyboard__lines { flex-direction: row; gap: 5px; align-items: flex-start; }
+.keyboard__section--columns .keyboard__lines {
+  flex-direction: row;
+  gap: calc(var(--key-unit) * 0.125);
+  align-items: flex-start;
+}
 .keyboard__section--columns .keyboard__column {
   transform: translateY(calc(var(--offset, 0) * var(--key-unit)));
 }
 /* Columns are shifted with a transform, so the cluster clears the deepest one. */
-.keyboard__thumbs { display: flex; gap: 5px; margin-top: calc(var(--key-unit) * 0.45); }
+.keyboard__thumbs { display: flex; gap: calc(var(--key-unit) * 0.125); margin-top: calc(var(--key-unit) * 0.45); }
 .keyboard__thumbs .key { font-size: 0.6rem; }
 .keyboard__thumbs--left { justify-content: flex-end; transform: rotate(7deg); transform-origin: top right; }
 .keyboard__thumbs--right { justify-content: flex-start; transform: rotate(-7deg); transform-origin: top left; }
 
 /* Two-piece boards: a wider gap and a hint of tenting. */
-.keyboard--split { gap: 34px; padding: 18px 14px; }
+.keyboard--split { gap: calc(var(--key-unit) * 0.85); padding: calc(var(--key-unit) * 0.45) calc(var(--key-unit) * 0.35); }
 .keyboard--split .keyboard__section { transform-origin: bottom center; }
 .keyboard--split .keyboard__section[data-section='left'] { transform: rotate(-2.5deg); }
 .keyboard--split .keyboard__section[data-section='right'] { transform: rotate(2.5deg); }
@@ -319,12 +328,13 @@ textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
   flex: 0 0 auto;
   width: calc(var(--key-unit) * var(--w, 1));
   height: var(--key-unit);
-  border-radius: 7px;
+  border-radius: calc(var(--key-unit) * 0.18);
   border: 1px solid var(--border);
   background: var(--bg-sunken);
   color: var(--text-muted);
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  /* Shrinks with the board, but never past what a letter needs to be read. */
+  font-size: max(8.5px, calc(var(--key-unit) * 0.29));
   line-height: 1.15;
   white-space: pre-line;
   text-align: center;
@@ -336,20 +346,27 @@ textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
   transition: background 0.08s ease, color 0.08s ease, transform 0.08s ease;
 }
 .key--spacer { visibility: hidden; }
+.key__shift { opacity: 0.75; }
+/* Too small for both levels: only the character the key types unshifted. */
+.keyboard--tight .key__shift { display: none; }
 /* Laptop and Apple boards stack ↑ and ↓ in the height of a single key. */
-.key-stack { flex: 0 0 auto; display: flex; flex-direction: column; gap: 2px; }
-.key--half { height: calc((var(--key-unit) - 2px) / 2); font-size: 0.5rem; border-radius: 5px; }
-.key--glyph { font-family: var(--font-ui); font-size: 0.95rem; }
-.key--half.key--glyph { font-size: 0.7rem; }
+.key-stack { flex: 0 0 auto; display: flex; flex-direction: column; gap: calc(var(--key-unit) * 0.05); }
+.key--half {
+  height: calc((var(--key-unit) - var(--key-unit) * 0.05) / 2);
+  font-size: max(7px, calc(var(--key-unit) * 0.2));
+  border-radius: calc(var(--key-unit) * 0.13);
+}
+.key--glyph { font-family: var(--font-ui); font-size: max(11px, calc(var(--key-unit) * 0.38)); }
+.key--half.key--glyph { font-size: max(8px, calc(var(--key-unit) * 0.28)); }
 .key--half.key--home::after { display: none; }
 .key--layer { border-style: dashed; }
-@media (max-width: 700px) { .keyboard { --key-unit: 32px; } .key { font-size: 0.62rem; } }
+
 
 .key--home::after {
   content: '';
   position: absolute;
-  bottom: 5px;
-  width: 12px;
+  bottom: calc(var(--key-unit) * 0.12);
+  width: calc(var(--key-unit) * 0.3);
   height: 2px;
   border-radius: 2px;
   background: currentColor;
@@ -470,9 +487,7 @@ textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 .field__hint--warn { border-left: 2px solid var(--accent); padding-left: 0.7rem; }
 
 .settings__preview { margin-bottom: 1.2rem; }
-.settings__preview .keyboard { --key-unit: 26px; padding: 10px; gap: 12px; }
-.settings__preview .keyboard--split { gap: 22px; padding: 14px 10px; }
-.settings__preview .key { font-size: 0.6rem; }
+.settings__preview .keyboard { max-height: 42vh; overflow-y: auto; }
 
 .settings__group { border: 1px solid var(--border); border-radius: 10px; padding: 0.8rem 1rem; margin: 0 0 1.2rem; }
 .settings__group legend { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); padding: 0 0.4rem; }

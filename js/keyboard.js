@@ -3,6 +3,17 @@
 import { FINGERS, keyStepsFor } from './data/keyboard-layout.js';
 import { hasTranslation, t } from './i18n.js';
 
+/**
+ * The whole board is drawn from one number, so fitting it to the page is a
+ * matter of solving for that number: every width, gap and padding is a
+ * multiple of --key-unit, which makes the drawn width exactly proportional.
+ */
+const MAX_UNIT = 40;
+const MIN_UNIT = 13;
+
+/** Below this the second level of a key is dropped: it no longer fits. */
+const TIGHT_UNIT = 24;
+
 const FINGER_ORDER = {
   left: [
     { id: 'l5', length: '1' },
@@ -36,19 +47,56 @@ export class KeyboardView {
    * `tinted` paints every key with the colour of the finger that owns it,
    * which is what the tutorial uses to explain the finger assignment.
    */
-  constructor(keyboardEl, handsEl, keyboard, { tinted = false } = {}) {
+  constructor(keyboardEl, handsEl, keyboard, { tinted = false, maxUnit = MAX_UNIT } = {}) {
     this.keyboardEl = keyboardEl;
     this.handsEl = handsEl;
     this.keyboard = keyboard;
     this.tinted = tinted;
+    this.maxUnit = maxUnit;
     this.keyEls = new Map();
     this.fingerEls = new Map();
+    this.fittedTo = 0;
     this.render();
+
+    // A hidden view measures zero, so this also fits it when it appears.
+    if (typeof ResizeObserver === 'function') {
+      new ResizeObserver(() => this.fit()).observe(keyboardEl);
+    }
+  }
+
+  /**
+   * Scales the board to the width it has been given, so no keyboard needs a
+   * horizontal scrollbar. Below MIN_UNIT the keys stop shrinking and the
+   * overflow comes back: unreadable keys would be worse than scrolling.
+   */
+  fit() {
+    const el = this.keyboardEl;
+    const available = el.clientWidth;
+    if (!available) return;
+    if (available === this.fittedTo) return;
+    this.fittedTo = available;
+
+    this.setUnit(this.maxUnit);
+    const natural = el.scrollWidth;
+    if (natural <= available) return;
+
+    this.setUnit(Math.max(MIN_UNIT, Math.floor(((available / natural) * this.maxUnit) * 10) / 10));
+  }
+
+  setUnit(unit) {
+    this.keyboardEl.style.setProperty('--key-unit', `${unit}px`);
+    this.keyboardEl.classList.toggle('keyboard--tight', unit < TIGHT_UNIT);
   }
 
   setKeyboard(keyboard) {
     this.keyboard = keyboard;
     this.render();
+  }
+
+  /** Forces a fit even when the width has not changed, after a redraw. */
+  refit() {
+    this.fittedTo = 0;
+    this.fit();
   }
 
   /** One key. A code drawn twice (both halves of a split) keeps both nodes. */
@@ -80,7 +128,21 @@ export class KeyboardView {
     // Symbol legends (⌘ ⇧ ⌫ ↑) come from the UI font, which draws them far
     // better than the monospace one used for characters.
     if ([...label].length === 1 && label.codePointAt(0) > 0x2000) el.classList.add('key--glyph');
-    el.textContent = label;
+
+    const [shift, base] = label.split('\n');
+    if (base === undefined) {
+      el.textContent = label;
+    } else {
+      // Two levels in their own elements, so the shifted one can be dropped
+      // when the board is drawn too small for both.
+      const shiftEl = document.createElement('span');
+      shiftEl.className = 'key__shift';
+      shiftEl.textContent = shift;
+      const baseEl = document.createElement('span');
+      baseEl.className = 'key__base';
+      baseEl.textContent = base;
+      el.append(shiftEl, baseEl);
+    }
 
     if (!this.keyEls.has(key.code)) this.keyEls.set(key.code, []);
     this.keyEls.get(key.code).push(el);
@@ -123,6 +185,8 @@ export class KeyboardView {
     for (const section of this.keyboard.sections) {
       this.keyboardEl.append(this.renderSection(section));
     }
+
+    this.refit();
 
     if (!this.handsEl) return;
     this.handsEl.textContent = '';
