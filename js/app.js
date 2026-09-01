@@ -646,6 +646,19 @@ function finishLesson() {
 
   const next = nextLessonAfter(app.lesson.id);
   $('#result-next').hidden = !next || app.lesson.custom;
+
+  window.dataLayer?.push({
+    event: 'lesson_complete',
+    lesson_id: app.lesson.id,
+    lesson_title: localized(app.lesson.title),
+    mode: app.lesson.custom ? 'free' : 'lesson',
+    wpm: stats.wpm,
+    accuracy: stats.accuracy,
+    errors: stats.errors,
+    duration_seconds: Math.round(stats.elapsedMs / 1000),
+    language: getLanguage(),
+  });
+
   $('#result-dialog').showModal();
 }
 
