@@ -262,7 +262,9 @@ textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 
 .word { white-space: nowrap; }
 .ch { position: relative; border-radius: 3px; transition: color 0.06s linear; color: var(--text-muted); }
-.ch--space { white-space: pre; }
+/* pre-wrap, not pre: the space must stay visible AND still be a line break
+   opportunity, or Firefox lays the whole lesson out on a single line. */
+.ch--space { white-space: pre-wrap; }
 .ch.is-correct { color: var(--ok); }
 .ch.is-fixed { color: color-mix(in srgb, var(--ok) 55%, var(--text-muted)); }
 .ch.is-wrong { color: var(--error); background: color-mix(in srgb, var(--error) 22%, transparent); }
