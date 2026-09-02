@@ -632,15 +632,46 @@ function ensureInput() {
   });
   $('#typing').append(input);
 
-  input.addEventListener('input', () => {
+  const flush = () => {
     const value = input.value;
+    if (!value) return;
     input.value = '';
-    for (const char of value) handleChar(char);
+    // A composed accent can arrive decomposed (á as a + combining acute),
+    // which is a different string from the one the exercise asks for.
+    for (const char of value.normalize('NFC')) handleChar(char);
+  };
+
+  /**
+   * The accent keys are dead keys, and a dead key is a composition: the
+   * browser shows the accent as provisional text and only commits a character
+   * once the vowel follows. Reading the box while that is going on counted the
+   * accent as a wrong keystroke, and emptying it cancelled the composition, so
+   * on the systems that compose (Linux, macOS) the tilde never arrived.
+   */
+  let composing = false;
+
+  input.addEventListener('compositionstart', () => {
+    composing = true;
+    // The accent is in: the guide moves on to the vowel that completes it.
+    app.deadPending = true;
+    refreshHighlight();
+  });
+
+  input.addEventListener('compositionend', () => {
+    composing = false;
+    flush();
+  });
+
+  input.addEventListener('input', (event) => {
+    if (composing || event.isComposing) return;
+    flush();
   });
 
   input.addEventListener('keydown', (event) => {
+    // Windows does not compose: the dead key only announces itself here.
     if (event.key === 'Dead') {
       app.deadPending = true;
+      app.view.flash(event.code, true);
       refreshHighlight();
       return;
     }

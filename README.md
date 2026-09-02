@@ -64,7 +64,11 @@ publica en GitHub Pages con una página por idioma.
 - **Teclado en pantalla** que resalta la siguiente tecla, el modificador necesario
   (Shift de la mano contraria, AltGr) y **guía de manos** con un color por dedo.
 - **Teclas muertas**: las tildes (´) y la diéresis (¨) se enseñan en dos pasos —
-  primero el acento, después la vocal.
+  primero el acento, después la vocal. Una tecla muerta es una *composición* del
+  navegador, así que el área de escritura no lee nada hasta que la composición
+  termina (leerla antes contaba el acento como error y, al vaciarla, cancelaba
+  la composición) y normaliza a NFC lo que recibe, porque macOS entrega la
+  vocal acentuada descompuesta.
 - **Modo estricto**: el cursor no avanza hasta que la tecla es correcta, que es la
   forma de que el dedo aprenda la posición.
 - **Estadísticas en vivo**: ppm netas, precisión, errores y tiempo.
