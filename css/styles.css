@@ -466,6 +466,40 @@ textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
   * { animation: none !important; transition: none !important; }
 }
 
+/* -------------------------------------------------------------- welcome */
+.welcome {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  padding: 1.6rem;
+  max-width: 560px;
+  width: calc(100vw - 2rem);
+}
+.welcome::backdrop { background: rgb(4 6 10 / 65%); backdrop-filter: blur(3px); }
+/* Only the open dialog turns into a column: `display` would beat the `[open]`
+   rule the browser uses to hide a closed one. */
+.welcome[open] { display: flex; flex-direction: column; max-height: calc(100vh - 2rem); }
+.welcome__body { overflow-y: auto; }
+.welcome__step-count { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin: 0 0 0.5rem; }
+.welcome__dots { display: flex; gap: 0.35rem; margin-bottom: 1.2rem; }
+.welcome__dot { width: 30px; height: 4px; border-radius: 999px; background: var(--border); }
+.welcome__dot.is-active { background: var(--accent); }
+.welcome__step[hidden] { display: none; }
+.welcome__step h2 { margin-bottom: 0.6rem; }
+.welcome__step > :last-child { margin-bottom: 0; }
+.welcome__preview { margin-bottom: 1rem; }
+.welcome__preview .keyboard { max-height: 32vh; overflow-y: auto; }
+.welcome__actions { display: flex; flex: none; align-items: center; gap: 0.6rem; margin-top: 1.4rem; }
+#welcome-skip { margin-right: auto; }
+
+@media (max-width: 560px) {
+  .welcome__actions { flex-wrap: wrap; }
+  #welcome-skip { margin-right: 0; width: 100%; text-align: left; }
+  .welcome__actions .button { flex: 1; }
+}
+
 /* ------------------------------------------------------------- settings */
 .settings {
   border: 1px solid var(--border);

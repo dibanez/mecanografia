@@ -9,6 +9,12 @@ compilación ni dependencias: es HTML, CSS y JavaScript con módulos ES nativos.
 - **Tutorial de iniciación**: postura, fila guía, reparto de dedos con un teclado
   coloreado e interactivo, uso del pulgar, Shift con la mano contraria, rutina de
   práctica y errores frecuentes. Se adapta a la distribución elegida.
+- **Bienvenida en la primera visita**: un recorrido de tres pasos que cuenta qué
+  es esto, pregunta qué teclado tienes —distribución y tipo se eligen ahí mismo,
+  con vista previa— y explica qué enseña el tutorial antes de llevarte a él.
+  Aparece una sola vez: la respuesta se guarda en `localStorage`
+  (`settings.onboarded`), quien ya tenía progreso no lo ve, y se puede cerrar
+  con <kbd>Esc</kbd> o saltar a las lecciones.
 - **Configurador (⚙ en la barra superior)**: idioma de la interfaz, distribución
   del teclado y tipo de teclado físico, con una vista previa en vivo. Todo se
   recuerda en `localStorage`.
@@ -181,6 +187,21 @@ por hash y no recarga la página, `showView()` empuja un evento a `dataLayer`:
 En GTM, dispara las vistas de página virtuales con un activador de tipo
 *Evento personalizado* con nombre `view_change` (o con *History Change*, que
 también salta al cambiar el hash).
+
+La bienvenida de la primera visita cierra con su propio evento, que dice por
+dónde se salió (`tutorial`, `lessons` o `dismissed` si se cerró con
+<kbd>Esc</kbd>) y en qué paso:
+
+```js
+{
+  event: 'onboarding_done',
+  ending: 'tutorial',
+  step: 3,
+  layout: 'es',
+  keyboard_form: 'sixty',
+  language: 'es',
+}
+```
 
 ### Consentimiento
 

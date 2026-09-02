@@ -25,6 +25,46 @@ export const COPY = {
     'og.url': 'dibanez.github.io/mecanografia',
     'og.badges': 'gratis · sin cuentas · sin anuncios',
 
+    /* ------------------------------------------------------------- welcome */
+    'welcome.count': 'Paso {current} de {total}',
+    'welcome.hello.title': 'Bienvenido a Mecanografía',
+    'welcome.hello.body':
+      'Aquí se aprende a escribir sin mirar el teclado: un tutorial que explica cómo se coloca ' +
+      'cada dedo y 31 lecciones que van de la fila guía a los textos reales.',
+    'welcome.hello.item1':
+      '<b>Sin cuentas y sin anuncios</b>: tu progreso se guarda solo en este navegador.',
+    'welcome.hello.item2':
+      '<b>Diez o quince minutos al día</b> valen más que dos horas el domingo.',
+    'welcome.hello.item3':
+      '<b>Tres estrellas por lección</b>, que se sacan con precisión y no con velocidad.',
+    'welcome.keyboard.title': 'Primero, dime qué teclado tienes',
+    'welcome.keyboard.body':
+      'El teclado en pantalla dibuja la distribución que elijas, no la que tenga puesta tu ' +
+      'ordenador. Si no coinciden, te enseñará teclas que no están donde dice.',
+    'welcome.keyboard.note':
+      '¿Dudas? Pulsa la tecla a la derecha de la <kbd>L</kbd>: si sale <kbd>ñ</kbd>, tienes la ' +
+      'distribución española. Todo esto se cambia cuando quieras en el botón <b>⚙</b> de arriba.',
+    'welcome.tutorial.title': 'Empieza por el tutorial',
+    'welcome.tutorial.body':
+      'Son ocho pasos que se leen en tres minutos y cuentan lo que ninguna lección enseña por su ' +
+      'cuenta:',
+    'welcome.tutorial.item1': '<b>La postura</b>: silla, codos, muñecas y altura de la pantalla.',
+    'welcome.tutorial.item2':
+      '<b>La fila guía</b>: dónde descansan las manos y cómo volver a ellas sin mirar, buscando ' +
+      'los relieves de la <kbd>F</kbd> y la <kbd>J</kbd>.',
+    'welcome.tutorial.item3':
+      '<b>El territorio de cada dedo</b>, sobre tu teclado coloreado y con la guía de manos.',
+    'welcome.tutorial.item4':
+      '<b>Las mayúsculas con la mano contraria</b> y el pulgar dedicado al espacio.',
+    'welcome.tutorial.item5':
+      '<b>Cómo practicar</b> y los errores que más se repiten al empezar.',
+    'welcome.tutorial.note':
+      'Si prefieres teclear ya, ve a las lecciones: el tutorial no se va de la barra de arriba.',
+    'welcome.back': 'Atrás',
+    'welcome.next': 'Siguiente',
+    'welcome.start': 'Ver el tutorial',
+    'welcome.skip': 'Ir a las lecciones',
+
     /* ------------------------------------------------------------ tutorial */
     'tutorial.title': 'Cómo empezar a mecanografiar',
     'tutorial.intro':
@@ -271,6 +311,45 @@ export const COPY = {
     'og.homeKey': ';',
     'og.url': 'dibanez.github.io/mecanografia/en',
     'og.badges': 'free · no accounts · no ads',
+
+    /* ------------------------------------------------------------- welcome */
+    'welcome.count': 'Step {current} of {total}',
+    'welcome.hello.title': 'Welcome to Mecanografía',
+    'welcome.hello.body':
+      'This is where you learn to type without looking: a tutorial explaining where every finger ' +
+      'goes and 31 lessons running from the home row to real texts.',
+    'welcome.hello.item1':
+      '<b>No accounts and no ads</b>: your progress is kept in this browser only.',
+    'welcome.hello.item2':
+      '<b>Ten or fifteen minutes a day</b> beat two hours on a Sunday.',
+    'welcome.hello.item3':
+      '<b>Three stars per lesson</b>, earned with accuracy rather than speed.',
+    'welcome.keyboard.title': 'First, tell me which keyboard you have',
+    'welcome.keyboard.body':
+      'The on-screen keyboard draws the layout you pick, not the one your computer is set to. ' +
+      'If they disagree, it will teach you keys that are not where it says.',
+    'welcome.keyboard.note':
+      'Not sure? Press the key to the right of <kbd>L</kbd>: if you get <kbd>ñ</kbd>, you are on ' +
+      'the Spanish layout. All of this can be changed later from the <b>⚙</b> button up top.',
+    'welcome.tutorial.title': 'Start with the tutorial',
+    'welcome.tutorial.body':
+      'Eight steps, three minutes to read, covering what no single lesson teaches on its own:',
+    'welcome.tutorial.item1': '<b>Posture</b>: chair, elbows, wrists and screen height.',
+    'welcome.tutorial.item2':
+      '<b>The home row</b>: where the hands rest and how to find it again without looking, by ' +
+      'feeling for the bumps on <kbd>F</kbd> and <kbd>J</kbd>.',
+    'welcome.tutorial.item3':
+      '<b>Which keys belong to each finger</b>, on your own keyboard in colour, with the hand guide.',
+    'welcome.tutorial.item4':
+      '<b>Capitals with the opposite hand</b> and one thumb dedicated to the space bar.',
+    'welcome.tutorial.item5':
+      '<b>How to practise</b> and the mistakes beginners repeat the most.',
+    'welcome.tutorial.note':
+      'If you would rather type right away, go to the lessons: the tutorial stays in the top bar.',
+    'welcome.back': 'Back',
+    'welcome.next': 'Next',
+    'welcome.start': 'Read the tutorial',
+    'welcome.skip': 'Go to the lessons',
 
     /* ------------------------------------------------------------ tutorial */
     'tutorial.title': 'How to start touch typing',

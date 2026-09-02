@@ -18,6 +18,8 @@ const EMPTY = {
     language: null,
     showKeyboard: true,
     showHands: true,
+    // False until the welcome tour is dismissed; see the migration in read().
+    onboarded: false,
   },
 };
 
@@ -29,7 +31,13 @@ function read() {
     return {
       ...structuredClone(EMPTY),
       ...parsed,
-      settings: { ...EMPTY.settings, ...(parsed.settings ?? {}) },
+      settings: {
+        ...EMPTY.settings,
+        // Anyone who already has an entry has been here before, so the welcome
+        // tour stays out of their way even though the flag is newer than them.
+        onboarded: true,
+        ...(parsed.settings ?? {}),
+      },
     };
   } catch {
     return structuredClone(EMPTY);

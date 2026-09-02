@@ -372,6 +372,58 @@
       </div>
     </section>
 
+    <!-- Welcome tour: shown once, the first time someone opens the site -->
+    <dialog class="welcome" id="welcome-dialog">
+      <p class="welcome__step-count" id="welcome-count"></p>
+      <div class="welcome__dots" id="welcome-dots" aria-hidden="true"></div>
+
+      <div class="welcome__body">
+        <div class="welcome__step" data-step="1">
+          <h2 data-i18n="welcome.hello.title">Welcome to Mecanografía</h2>
+          <p data-i18n="welcome.hello.body">This is where you learn to type without looking: a tutorial explaining where every finger goes and 31 lessons running from the home row to real texts.</p>
+          <ul class="checklist checklist--plain">
+            <li data-i18n-html="welcome.hello.item1"><b>No accounts and no ads</b>: your progress is kept in this browser only.</li>
+            <li data-i18n-html="welcome.hello.item2"><b>Ten or fifteen minutes a day</b> beat two hours on a Sunday.</li>
+            <li data-i18n-html="welcome.hello.item3"><b>Three stars per lesson</b>, earned with accuracy rather than speed.</li>
+          </ul>
+        </div>
+
+        <div class="welcome__step" data-step="2" hidden>
+          <h2 data-i18n="welcome.keyboard.title">First, tell me which keyboard you have</h2>
+          <p data-i18n="welcome.keyboard.body">The on-screen keyboard draws the layout you pick, not the one your computer is set to. If they disagree, it will teach you keys that are not where it says.</p>
+          <label class="field">
+            <span class="field__label" data-i18n="settings.layout">Keyboard layout</span>
+            <select class="select" id="welcome-layout"></select>
+          </label>
+          <label class="field">
+            <span class="field__label" data-i18n="settings.form">Keyboard type</span>
+            <select class="select" id="welcome-form"></select>
+          </label>
+          <div class="welcome__preview"><div class="keyboard" id="welcome-keyboard" aria-hidden="true"></div></div>
+          <p class="step__note" data-i18n-html="welcome.keyboard.note">Not sure? Press the key to the right of <kbd>L</kbd>: if you get <kbd>ñ</kbd>, you are on the Spanish layout. All of this can be changed later from the <b>⚙</b> button up top.</p>
+        </div>
+
+        <div class="welcome__step" data-step="3" hidden>
+          <h2 data-i18n="welcome.tutorial.title">Start with the tutorial</h2>
+          <p data-i18n="welcome.tutorial.body">Eight steps, three minutes to read, covering what no single lesson teaches on its own:</p>
+          <ul class="checklist">
+            <li data-i18n-html="welcome.tutorial.item1"><b>Posture</b>: chair, elbows, wrists and screen height.</li>
+            <li data-i18n-html="welcome.tutorial.item2"><b>The home row</b>: where the hands rest and how to find it again without looking, by feeling for the bumps on <kbd>F</kbd> and <kbd>J</kbd>.</li>
+            <li data-i18n-html="welcome.tutorial.item3"><b>Which keys belong to each finger</b>, on your own keyboard in colour, with the hand guide.</li>
+            <li data-i18n-html="welcome.tutorial.item4"><b>Capitals with the opposite hand</b> and one thumb dedicated to the space bar.</li>
+            <li data-i18n-html="welcome.tutorial.item5"><b>How to practise</b> and the mistakes beginners repeat the most.</li>
+          </ul>
+          <p class="step__note" data-i18n-html="welcome.tutorial.note">If you would rather type right away, go to the lessons: the tutorial stays in the top bar.</p>
+        </div>
+      </div>
+
+      <div class="welcome__actions">
+        <button class="link-button" id="welcome-skip" type="button" data-i18n="welcome.skip">Go to the lessons</button>
+        <button class="button" id="welcome-back" type="button" data-i18n="welcome.back" hidden>Back</button>
+        <button class="button button--primary" id="welcome-next" type="button" autofocus data-i18n="welcome.next">Next</button>
+      </div>
+    </dialog>
+
     <!-- Settings: interface language, layout and physical keyboard shape -->
     <dialog class="settings" id="settings-dialog">
       <h2 data-i18n="settings.title">Settings</h2>

@@ -372,6 +372,58 @@
       </div>
     </section>
 
+    <!-- Welcome tour: shown once, the first time someone opens the site -->
+    <dialog class="welcome" id="welcome-dialog">
+      <p class="welcome__step-count" id="welcome-count"></p>
+      <div class="welcome__dots" id="welcome-dots" aria-hidden="true"></div>
+
+      <div class="welcome__body">
+        <div class="welcome__step" data-step="1">
+          <h2 data-i18n="welcome.hello.title">Bienvenido a Mecanografía</h2>
+          <p data-i18n="welcome.hello.body">Aquí se aprende a escribir sin mirar el teclado: un tutorial que explica cómo se coloca cada dedo y 31 lecciones que van de la fila guía a los textos reales.</p>
+          <ul class="checklist checklist--plain">
+            <li data-i18n-html="welcome.hello.item1"><b>Sin cuentas y sin anuncios</b>: tu progreso se guarda solo en este navegador.</li>
+            <li data-i18n-html="welcome.hello.item2"><b>Diez o quince minutos al día</b> valen más que dos horas el domingo.</li>
+            <li data-i18n-html="welcome.hello.item3"><b>Tres estrellas por lección</b>, que se sacan con precisión y no con velocidad.</li>
+          </ul>
+        </div>
+
+        <div class="welcome__step" data-step="2" hidden>
+          <h2 data-i18n="welcome.keyboard.title">Primero, dime qué teclado tienes</h2>
+          <p data-i18n="welcome.keyboard.body">El teclado en pantalla dibuja la distribución que elijas, no la que tenga puesta tu ordenador. Si no coinciden, te enseñará teclas que no están donde dice.</p>
+          <label class="field">
+            <span class="field__label" data-i18n="settings.layout">Distribución del teclado</span>
+            <select class="select" id="welcome-layout"></select>
+          </label>
+          <label class="field">
+            <span class="field__label" data-i18n="settings.form">Tipo de teclado</span>
+            <select class="select" id="welcome-form"></select>
+          </label>
+          <div class="welcome__preview"><div class="keyboard" id="welcome-keyboard" aria-hidden="true"></div></div>
+          <p class="step__note" data-i18n-html="welcome.keyboard.note">¿Dudas? Pulsa la tecla a la derecha de la <kbd>L</kbd>: si sale <kbd>ñ</kbd>, tienes la distribución española. Todo esto se cambia cuando quieras en el botón <b>⚙</b> de arriba.</p>
+        </div>
+
+        <div class="welcome__step" data-step="3" hidden>
+          <h2 data-i18n="welcome.tutorial.title">Empieza por el tutorial</h2>
+          <p data-i18n="welcome.tutorial.body">Son ocho pasos que se leen en tres minutos y cuentan lo que ninguna lección enseña por su cuenta:</p>
+          <ul class="checklist">
+            <li data-i18n-html="welcome.tutorial.item1"><b>La postura</b>: silla, codos, muñecas y altura de la pantalla.</li>
+            <li data-i18n-html="welcome.tutorial.item2"><b>La fila guía</b>: dónde descansan las manos y cómo volver a ellas sin mirar, buscando los relieves de la <kbd>F</kbd> y la <kbd>J</kbd>.</li>
+            <li data-i18n-html="welcome.tutorial.item3"><b>El territorio de cada dedo</b>, sobre tu teclado coloreado y con la guía de manos.</li>
+            <li data-i18n-html="welcome.tutorial.item4"><b>Las mayúsculas con la mano contraria</b> y el pulgar dedicado al espacio.</li>
+            <li data-i18n-html="welcome.tutorial.item5"><b>Cómo practicar</b> y los errores que más se repiten al empezar.</li>
+          </ul>
+          <p class="step__note" data-i18n-html="welcome.tutorial.note">Si prefieres teclear ya, ve a las lecciones: el tutorial no se va de la barra de arriba.</p>
+        </div>
+      </div>
+
+      <div class="welcome__actions">
+        <button class="link-button" id="welcome-skip" type="button" data-i18n="welcome.skip">Ir a las lecciones</button>
+        <button class="button" id="welcome-back" type="button" data-i18n="welcome.back" hidden>Atrás</button>
+        <button class="button button--primary" id="welcome-next" type="button" autofocus data-i18n="welcome.next">Siguiente</button>
+      </div>
+    </dialog>
+
     <!-- Settings: interface language, layout and physical keyboard shape -->
     <dialog class="settings" id="settings-dialog">
       <h2 data-i18n="settings.title">Ajustes</h2>

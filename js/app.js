@@ -54,6 +54,8 @@ const app = {
   view: null,
   tutorialView: null,
   settingsView: null,
+  welcomeView: null,
+  welcomeStep: 1,
   input: null,
   charEls: [],
   deadPending: false,
@@ -109,6 +111,7 @@ function rebuildKeyboard() {
   app.view?.setKeyboard(app.keyboard);
   app.tutorialView?.setKeyboard(app.keyboard);
   app.settingsView?.setKeyboard(app.keyboard);
+  app.welcomeView?.setKeyboard(app.keyboard);
   $('#setting-layer-note').hidden = !app.keyboard.layerCodes.length || !app.form.layered;
   updateAppleNote();
 }
@@ -128,8 +131,9 @@ function applyLayout(layoutId, { rerender = true } = {}) {
   app.layout = getLayout(layoutId);
   app.course = preferredCourse();
   app.settings = store.saveSettings({ layout: app.layout.id });
-  // Routing switches the layout too, so the dialog cannot be left behind.
+  // Routing switches the layout too, so no dialog can be left behind.
   $('#setting-layout').value = app.layout.id;
+  $('#welcome-layout').value = app.layout.id;
   rebuildKeyboard();
   if (!rerender) return;
 
@@ -143,6 +147,7 @@ function applyForm(formId) {
   app.form = getForm(formId);
   app.settings = store.saveSettings({ form: app.form.id });
   $('#setting-form').value = app.form.id;
+  $('#welcome-form').value = app.form.id;
   $('#setting-form-note').textContent = t(`form.${app.form.id}.note`);
   rebuildKeyboard();
 }
@@ -344,6 +349,76 @@ function initTutorial() {
 
   // The step that explains the settings opens them, rather than pointing at ⚙.
   $('#tutorial-settings').addEventListener('click', openSettings);
+}
+
+/* --------------------------------------------------------------- welcome */
+
+/** Panels of the welcome tour: what this is, which keyboard, the tutorial. */
+const WELCOME_STEPS = 3;
+
+function setWelcomeStep(step) {
+  app.welcomeStep = Math.min(Math.max(step, 1), WELCOME_STEPS);
+  for (const panel of document.querySelectorAll('.welcome__step')) {
+    panel.hidden = Number(panel.dataset.step) !== app.welcomeStep;
+  }
+  document.querySelectorAll('.welcome__dot').forEach((dot, index) => {
+    dot.classList.toggle('is-active', index < app.welcomeStep);
+  });
+
+  $('#welcome-count').textContent = t('welcome.count', {
+    current: app.welcomeStep,
+    total: WELCOME_STEPS,
+  });
+  $('#welcome-back').hidden = app.welcomeStep === 1;
+  // The last step is the one that hands the visitor over to the tutorial.
+  const last = app.welcomeStep === WELCOME_STEPS;
+  $('#welcome-next').textContent = t(last ? 'welcome.start' : 'welcome.next');
+}
+
+/** Opens the tour, building its preview keyboard the first time. */
+function openWelcome() {
+  if (!app.welcomeView) {
+    app.welcomeView = new KeyboardView($('#welcome-keyboard'), null, app.keyboard, { tinted: true });
+  }
+  setWelcomeStep(1);
+  $('#welcome-dialog').showModal();
+}
+
+function initWelcome() {
+  const dialog = $('#welcome-dialog');
+  $('#welcome-dots').innerHTML = '<span class="welcome__dot"></span>'.repeat(WELCOME_STEPS);
+
+  // The same two questions as the settings, asked before the first lesson.
+  $('#welcome-layout').addEventListener('change', (event) => applyLayout(event.target.value));
+  $('#welcome-form').addEventListener('change', (event) => applyForm(event.target.value));
+
+  $('#welcome-back').addEventListener('click', () => setWelcomeStep(app.welcomeStep - 1));
+  $('#welcome-next').addEventListener('click', () => {
+    if (app.welcomeStep < WELCOME_STEPS) {
+      setWelcomeStep(app.welcomeStep + 1);
+      return;
+    }
+    location.hash = t('route.tutorial');
+    dialog.close('tutorial');
+  });
+  $('#welcome-skip').addEventListener('click', () => {
+    location.hash = t('route.lessons');
+    dialog.close('lessons');
+  });
+
+  // However it is closed — a button or Esc — the tour has had its one turn.
+  dialog.addEventListener('close', () => {
+    app.settings = store.saveSettings({ onboarded: true });
+    window.dataLayer?.push({
+      event: 'onboarding_done',
+      ending: dialog.returnValue || 'dismissed',
+      step: app.welcomeStep,
+      layout: app.layout.id,
+      keyboard_form: app.form.id,
+      language: getLanguage(),
+    });
+    app.input?.focus();
+  });
 }
 
 /* -------------------------------------------------------------- lessons */
@@ -765,6 +840,10 @@ function fillSelects() {
     FORM_LIST.map(({ id }) => ({ id, name: t(`form.${id}`) })),
     app.form.id,
   );
+
+  // The welcome tour asks the same two questions before the first lesson.
+  $('#welcome-layout').innerHTML = $('#setting-layout').innerHTML;
+  $('#welcome-form').innerHTML = $('#setting-form').innerHTML;
 }
 
 /** Opens the settings, building the preview keyboard the first time. */
@@ -821,6 +900,7 @@ function init() {
   app.view = new KeyboardView($('#keyboard'), $('#hands'), app.keyboard);
   initTutorial();
   initSettings();
+  initWelcome();
   applyDisplaySettings();
   $('#setting-layer-note').hidden = !app.keyboard.layerCodes.length || !app.form.layered;
   updateAppleNote();
@@ -896,6 +976,9 @@ function init() {
 
   window.addEventListener('hashchange', route);
   route();
+
+  // A first visit meets the tour, over whichever view the address asked for.
+  if (!app.settings.onboarded) openWelcome();
 }
 
 init();
