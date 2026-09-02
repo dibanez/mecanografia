@@ -1,8 +1,16 @@
 # Mecanografía
 
-Aplicación web para aprender mecanografía en teclado español (ISO) o inglés
-(US ANSI y UK ISO), pensada para publicarse en GitHub Pages. No necesita
-compilación ni dependencias: es HTML, CSS y JavaScript con módulos ES nativos.
+Curso gratuito para aprender a escribir sin mirar el teclado, en español o en
+inglés. Empieza por un tutorial que explica postura, fila guía y qué teclas
+toca cada dedo sobre el dibujo de tu propio teclado, y sigue con 31 lecciones
+progresivas que van de la fila guía a los textos reales. Todo pasa en el
+navegador: el progreso se guarda en tu equipo, no hay cuentas ni anuncios.
+
+Se adapta al teclado que tienes delante —cuatro distribuciones y once tipos
+físicos—, y esa elección gobierna el temario: en un teclado inglés no se
+enseñan lecciones llenas de ñ y tildes que ese teclado no puede escribir. Está
+hecho en HTML, CSS y módulos ES nativos, sin compilación ni dependencias, y se
+publica en GitHub Pages con una página por idioma.
 
 ## Qué incluye
 
