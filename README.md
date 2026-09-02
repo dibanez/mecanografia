@@ -14,7 +14,10 @@ compilación ni dependencias: es HTML, CSS y JavaScript con módulos ES nativos.
   con vista previa— y explica qué enseña el tutorial antes de llevarte a él.
   Aparece una sola vez: la respuesta se guarda en `localStorage`
   (`settings.onboarded`), quien ya tenía progreso no lo ve, y se puede cerrar
-  con <kbd>Esc</kbd> o saltar a las lecciones.
+  con <kbd>Esc</kbd> o saltar a las lecciones. Espera su turno detrás del aviso
+  de cookies: se abre en cuanto se responde, y si para entonces ya se está
+  tecleando una lección no interrumpe — vuelve a intentarlo en la siguiente
+  visita.
 - **Configurador (⚙ en la barra superior)**: idioma de la interfaz, distribución
   del teclado y tipo de teclado físico, con una vista previa en vivo. Todo se
   recuerda en `localStorage`.
@@ -211,6 +214,11 @@ analítica. `js/consent.js` enseña el aviso, recuerda la respuesta en
 `localStorage` (`mecanografia:consent`) y envía `consent update` a `dataLayer`;
 el enlace «Preferencias de cookies» del pie reabre el aviso para poder cambiar
 de opinión.
+
+Al responder, el módulo exporta el estado (`consentAnswered()`) y emite un
+evento `consent:answered` en el documento. De ahí cuelga la bienvenida de la
+primera visita: el aviso es lo primero que hay que poder leer, así que ningún
+diálogo se pone por encima hasta que está contestado.
 
 Para que GA4 lo respete, marca sus etiquetas como que requieren
 `analytics_storage` (es lo que hace el modo de consentimiento por defecto) y no

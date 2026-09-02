@@ -4,6 +4,9 @@
  * The head of index.html denies every storage type before Tag Manager loads,
  * so nothing is written until the visitor accepts. This module remembers the
  * answer and lifts (or keeps) the denial on later visits.
+ *
+ * The banner is the first thing a first visit has to answer, so it also says
+ * when it has been answered: whatever else wants the screen waits its turn.
  */
 
 const STORAGE_KEY = 'mecanografia:consent';
@@ -40,6 +43,11 @@ function writeChoice(choice) {
   }
 }
 
+/** Whether the visitor has already said yes or no to analytics. */
+export function consentAnswered() {
+  return readChoice() !== null;
+}
+
 function applyChoice(choice) {
   gtag('consent', 'update', Object.fromEntries(OPTIONAL_STORAGE.map((key) => [key, choice])));
   window.dataLayer.push({ event: 'consent_update', consent_state: choice });
@@ -60,6 +68,7 @@ function init() {
     writeChoice(choice);
     applyChoice(choice);
     banner.hidden = true;
+    document.dispatchEvent(new CustomEvent('consent:answered', { detail: choice }));
   });
 
   // Withdrawing consent has to be as easy as giving it.

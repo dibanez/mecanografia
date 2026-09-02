@@ -24,6 +24,7 @@ import {
   getLesson,
   lessonsOfBlock,
 } from './data/lessons.js';
+import { consentAnswered } from './consent.js';
 import { TypingEngine, ratingFor } from './engine.js';
 import {
   DEFAULT_LANGUAGE,
@@ -977,8 +978,22 @@ function init() {
   window.addEventListener('hashchange', route);
   route();
 
-  // A first visit meets the tour, over whichever view the address asked for.
-  if (!app.settings.onboarded) openWelcome();
+  // A first visit meets the tour, over whichever view the address asked for —
+  // but only once the cookie notice has been answered, because a modal over it
+  // would ask the visitor to decide on a question they can no longer read.
+  if (!app.settings.onboarded) {
+    if (consentAnswered()) openWelcome();
+    else {
+      document.addEventListener(
+        'consent:answered',
+        // Answering it late, from inside a lesson, must not cut the typing off.
+        () => {
+          if (!app.lesson) openWelcome();
+        },
+        { once: true },
+      );
+    }
+  }
 }
 
 init();
