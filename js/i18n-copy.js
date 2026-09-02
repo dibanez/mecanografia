@@ -42,8 +42,21 @@ export const COPY = {
       'El teclado en pantalla dibuja la distribución que elijas, no la que tenga puesta tu ' +
       'ordenador. Si no coinciden, te enseñará teclas que no están donde dice.',
     'welcome.keyboard.note':
-      '¿Dudas? Pulsa la tecla a la derecha de la <kbd>L</kbd>: si sale <kbd>ñ</kbd>, tienes la ' +
-      'distribución española. Todo esto se cambia cuando quieras en el botón <b>⚙</b> de arriba.',
+      'Tiene que ser la distribución que tengas puesta en el sistema operativo, que no siempre es ' +
+      'la que viene serigrafiada en las teclas. Todo esto se cambia cuando quieras en el botón ' +
+      '<b>⚙</b> de arriba.',
+    'detect.start': 'Averiguarlo pulsando teclas',
+    'detect.cancel': 'Dejarlo',
+    'detect.probe.Semicolon':
+      'Pulsa la tecla que tienes <b>a la derecha de la <kbd>L</kbd></b>.',
+    'detect.probe.Backquote':
+      'Ahora la de arriba del todo a la izquierda, <b>justo a la izquierda del <kbd>1</kbd></b>.',
+    'detect.probe.Backslash':
+      'Y ahora la que está pegada a la tecla <kbd>Intro</kbd>, encima de ella o a su izquierda.',
+    'detect.done': 'Es un teclado <b>{name}</b>. Ya está elegido.',
+    'detect.unknown':
+      'Eso no es ninguna de las cuatro distribuciones que enseño. Elige a mano la que más se ' +
+      'parezca a la tuya.',
     'welcome.tutorial.title': 'Empieza por el tutorial',
     'welcome.tutorial.body':
       'Son ocho pasos que se leen en tres minutos y cuentan lo que ninguna lección enseña por su ' +
@@ -329,8 +342,18 @@ export const COPY = {
       'The on-screen keyboard draws the layout you pick, not the one your computer is set to. ' +
       'If they disagree, it will teach you keys that are not where it says.',
     'welcome.keyboard.note':
-      'Not sure? Press the key to the right of <kbd>L</kbd>: if you get <kbd>ñ</kbd>, you are on ' +
-      'the Spanish layout. All of this can be changed later from the <b>⚙</b> button up top.',
+      'It has to be the layout your operating system is set to, which is not always the one ' +
+      'printed on the keys. All of this can be changed later from the <b>⚙</b> button up top.',
+    'detect.start': 'Work it out by pressing keys',
+    'detect.cancel': 'Never mind',
+    'detect.probe.Semicolon': 'Press the key <b>to the right of <kbd>L</kbd></b>.',
+    'detect.probe.Backquote':
+      'Now the one at the very top left, <b>just left of the <kbd>1</kbd></b>.',
+    'detect.probe.Backslash':
+      'And now the one touching the <kbd>Enter</kbd> key, above it or to its left.',
+    'detect.done': 'That is a <b>{name}</b> keyboard. Already selected.',
+    'detect.unknown':
+      'That is none of the four layouts taught here. Pick the closest one to yours by hand.',
     'welcome.tutorial.title': 'Start with the tutorial',
     'welcome.tutorial.body':
       'Eight steps, three minutes to read, covering what no single lesson teaches on its own:',

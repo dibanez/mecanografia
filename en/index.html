@@ -399,8 +399,12 @@
             <span class="field__label" data-i18n="settings.form">Keyboard type</span>
             <select class="select" id="welcome-form"></select>
           </label>
+          <div class="detect">
+            <button class="button" id="detect-start" type="button" data-i18n="detect.start">Work it out by pressing keys</button>
+            <p class="detect__status" id="detect-status" hidden></p>
+          </div>
           <div class="welcome__preview"><div class="keyboard" id="welcome-keyboard" aria-hidden="true"></div></div>
-          <p class="step__note" data-i18n-html="welcome.keyboard.note">Not sure? Press the key to the right of <kbd>L</kbd>: if you get <kbd>ñ</kbd>, you are on the Spanish layout. All of this can be changed later from the <b>⚙</b> button up top.</p>
+          <p class="step__note" data-i18n-html="welcome.keyboard.note">It has to be the layout your operating system is set to, which is not always the one printed on the keys. All of this can be changed later from the <b>⚙</b> button up top.</p>
         </div>
 
         <div class="welcome__step" data-step="3" hidden>

@@ -19,7 +19,8 @@ publica en GitHub Pages con una página por idioma.
   práctica y errores frecuentes. Se adapta a la distribución elegida.
 - **Bienvenida en la primera visita**: un recorrido de tres pasos que cuenta qué
   es esto, pregunta qué teclado tienes —distribución y tipo se eligen ahí mismo,
-  con vista previa— y explica qué enseña el tutorial antes de llevarte a él.
+  con vista previa, o se **averiguan pulsando teclas**— y explica qué enseña el
+  tutorial antes de llevarte a él.
   Aparece una sola vez: la respuesta se guarda en `localStorage`
   (`settings.onboarded`), quien ya tenía progreso no lo ve, y se puede cerrar
   con <kbd>Esc</kbd> o saltar a las lecciones. Espera su turno detrás del aviso
@@ -34,6 +35,12 @@ publica en GitHub Pages con una página por idioma.
   pregeneradas para que un buscador las lea sin ejecutar JavaScript. El idioma
   es independiente de la distribución: puedes practicar el teclado español con
   la interfaz en inglés o al revés.
+- **Detector de distribución**: el botón «Averiguarlo pulsando teclas» de la
+  bienvenida señala una tecla en el dibujo, mira qué carácter manda el navegador
+  al pulsarla y descarta las distribuciones que no encajan. La tecla a la derecha
+  de la <kbd>L</kbd> ya separa la española (`ñ`) de las tres inglesas (`;`); dos
+  pulsaciones más distinguen US, UK y UK de Apple. Si el teclado no es ninguno de
+  los cuatro, lo dice en vez de elegir por elegir.
 - **Cuatro distribuciones**: español (ISO), inglés US (ANSI), inglés UK (ISO) e
   inglés UK de Apple. La distribución decide qué carácter da cada tecla y con
   ella el temario. La británica de Apple no es la de Windows: la `@` está en

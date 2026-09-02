@@ -263,6 +263,12 @@ export class KeyboardView {
     }
   }
 
+  /** Points at one physical key, whatever it happens to type. */
+  highlightKey(code) {
+    this.clearHighlights();
+    for (const el of this.elementsFor(code)) el.classList.add('is-next');
+  }
+
   /** Dims every key not owned by `fingerId`; pass null to show them all. */
   spotlightFinger(fingerId) {
     for (const [code, els] of this.keyEls) {

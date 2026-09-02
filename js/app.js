@@ -57,6 +57,8 @@ const app = {
   settingsView: null,
   welcomeView: null,
   welcomeStep: 1,
+  // Layouts still compatible with what has been typed into the detector.
+  detect: null,
   input: null,
   charEls: [],
   deadPending: false,
@@ -358,6 +360,7 @@ function initTutorial() {
 const WELCOME_STEPS = 3;
 
 function setWelcomeStep(step) {
+  stopDetecting();
   app.welcomeStep = Math.min(Math.max(step, 1), WELCOME_STEPS);
   for (const panel of document.querySelectorAll('.welcome__step')) {
     panel.hidden = Number(panel.dataset.step) !== app.welcomeStep;
@@ -393,6 +396,12 @@ function initWelcome() {
   $('#welcome-layout').addEventListener('change', (event) => applyLayout(event.target.value));
   $('#welcome-form').addEventListener('change', (event) => applyForm(event.target.value));
 
+  $('#detect-start').addEventListener('click', () => {
+    if (app.detect) stopDetecting();
+    else startDetecting();
+  });
+  dialog.addEventListener('keydown', readDetectKey);
+
   $('#welcome-back').addEventListener('click', () => setWelcomeStep(app.welcomeStep - 1));
   $('#welcome-next').addEventListener('click', () => {
     if (app.welcomeStep < WELCOME_STEPS) {
@@ -420,6 +429,91 @@ function initWelcome() {
     });
     app.input?.focus();
   });
+}
+
+/* ----------------------------------------------------- keyboard detection */
+
+/**
+ * Reading the layout off the visitor instead of asking them to name it.
+ *
+ * The browser reports both the physical key (`code`) and the character it
+ * produced (`key`), and that pair is exactly what tells the layouts apart: the
+ * key right of the L types ñ on the Spanish one and ; on the three English
+ * ones. Every press narrows the candidates, so the questions below are only
+ * the shortest route — any key the visitor happens to hit counts the same.
+ */
+const DETECT_PROBES = ['Semicolon', 'Backquote', 'Backslash'];
+
+function setDetectStatus(html) {
+  const status = $('#detect-status');
+  status.innerHTML = html;
+  status.hidden = !html;
+}
+
+/** Layouts that could still have produced `typed` on that physical key. */
+function narrowLayouts(candidates, code, typed) {
+  return candidates.filter((layout) => {
+    const key = layout.keys[code];
+    // A key the layout says nothing about cannot rule it out either.
+    if (!key) return true;
+    return [key.base, key.shift, key.altgr].some((char) => char?.toLowerCase() === typed);
+  });
+}
+
+/** Next question worth asking: the first key the candidates disagree on. */
+function nextProbe(candidates) {
+  return DETECT_PROBES.find(
+    (code) => new Set(candidates.map((layout) => layout.keys[code]?.base)).size > 1,
+  );
+}
+
+/** Asks for a key, pointing at it on the drawn board so it can be found. */
+function askForKey(code) {
+  setDetectStatus(t(`detect.probe.${code}`));
+  app.welcomeView?.highlightKey(code);
+}
+
+function stopDetecting(message = '') {
+  app.detect = null;
+  app.welcomeView?.clearHighlights();
+  $('#detect-start').textContent = t('detect.start');
+  setDetectStatus(message);
+}
+
+function startDetecting() {
+  app.detect = LAYOUT_LIST.slice();
+  $('#detect-start').textContent = t('detect.cancel');
+  askForKey(nextProbe(app.detect));
+}
+
+function readDetectKey(event) {
+  if (!app.detect) return;
+  if (event.key === 'Escape') {
+    event.preventDefault();
+    stopDetecting();
+    return;
+  }
+  // While the keyboard is being read, no key belongs to the buttons behind.
+  event.preventDefault();
+  // Modifiers, function keys and dead keys report a name, not a character.
+  if (event.key.length !== 1) return;
+
+  const narrowed = narrowLayouts(app.detect, event.code, event.key.toLowerCase());
+  if (narrowed.length === 1) {
+    const [layout] = narrowed;
+    applyLayout(layout.id);
+    stopDetecting(t('detect.done', { name: layout.name }));
+    return;
+  }
+
+  const probe = narrowed.length ? nextProbe(narrowed) : null;
+  if (!probe) {
+    // Either nothing matched, or what is left cannot be told apart by asking.
+    stopDetecting(t('detect.unknown'));
+    return;
+  }
+  app.detect = narrowed;
+  askForKey(probe);
 }
 
 /* -------------------------------------------------------------- lessons */

@@ -489,6 +489,9 @@ textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 .welcome__step[hidden] { display: none; }
 .welcome__step h2 { margin-bottom: 0.6rem; }
 .welcome__step > :last-child { margin-bottom: 0; }
+.detect { display: flex; align-items: baseline; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.detect__status { flex: 1 1 220px; margin: 0; font-size: 0.85rem; line-height: 1.45; }
+.detect__status[hidden] { display: none; }
 .welcome__preview { margin-bottom: 1rem; }
 .welcome__preview .keyboard { max-height: 32vh; overflow-y: auto; }
 .welcome__actions { display: flex; flex: none; align-items: center; gap: 0.6rem; margin-top: 1.4rem; }

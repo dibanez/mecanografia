@@ -399,8 +399,12 @@
             <span class="field__label" data-i18n="settings.form">Tipo de teclado</span>
             <select class="select" id="welcome-form"></select>
           </label>
+          <div class="detect">
+            <button class="button" id="detect-start" type="button" data-i18n="detect.start">Averiguarlo pulsando teclas</button>
+            <p class="detect__status" id="detect-status" hidden></p>
+          </div>
           <div class="welcome__preview"><div class="keyboard" id="welcome-keyboard" aria-hidden="true"></div></div>
-          <p class="step__note" data-i18n-html="welcome.keyboard.note">¿Dudas? Pulsa la tecla a la derecha de la <kbd>L</kbd>: si sale <kbd>ñ</kbd>, tienes la distribución española. Todo esto se cambia cuando quieras en el botón <b>⚙</b> de arriba.</p>
+          <p class="step__note" data-i18n-html="welcome.keyboard.note">Tiene que ser la distribución que tengas puesta en el sistema operativo, que no siempre es la que viene serigrafiada en las teclas. Todo esto se cambia cuando quieras en el botón <b>⚙</b> de arriba.</p>
         </div>
 
         <div class="welcome__step" data-step="3" hidden>
