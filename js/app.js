@@ -57,7 +57,8 @@ const app = {
   settingsView: null,
   welcomeView: null,
   welcomeStep: 1,
-  // Layouts still compatible with what has been typed into the detector.
+  // Running detector, as { host, candidates }: the layouts still compatible
+  // with everything typed into it.
   detect: null,
   input: null,
   charEls: [],
@@ -360,7 +361,7 @@ function initTutorial() {
 const WELCOME_STEPS = 3;
 
 function setWelcomeStep(step) {
-  stopDetecting();
+  stopDetecting('welcome');
   app.welcomeStep = Math.min(Math.max(step, 1), WELCOME_STEPS);
   for (const panel of document.querySelectorAll('.welcome__step')) {
     panel.hidden = Number(panel.dataset.step) !== app.welcomeStep;
@@ -396,11 +397,7 @@ function initWelcome() {
   $('#welcome-layout').addEventListener('change', (event) => applyLayout(event.target.value));
   $('#welcome-form').addEventListener('change', (event) => applyForm(event.target.value));
 
-  $('#detect-start').addEventListener('click', () => {
-    if (app.detect) stopDetecting();
-    else startDetecting();
-  });
-  dialog.addEventListener('keydown', readDetectKey);
+  initDetector('welcome', dialog);
 
   $('#welcome-back').addEventListener('click', () => setWelcomeStep(app.welcomeStep - 1));
   $('#welcome-next').addEventListener('click', () => {
@@ -444,8 +441,26 @@ function initWelcome() {
  */
 const DETECT_PROBES = ['Semicolon', 'Backquote', 'Backslash'];
 
-function setDetectStatus(html) {
-  const status = $('#detect-status');
+/**
+ * The two places that ask which keyboard this is: the welcome tour and the
+ * settings. Each brings its own button, status line and drawn board to point
+ * at; the reading itself is the same, and only one runs at a time.
+ */
+const DETECTORS = {
+  welcome: {
+    button: '#detect-start',
+    status: '#detect-status',
+    board: () => app.welcomeView,
+  },
+  settings: {
+    button: '#settings-detect-start',
+    status: '#settings-detect-status',
+    board: () => app.settingsView,
+  },
+};
+
+function setDetectStatus(host, html) {
+  const status = $(DETECTORS[host].status);
   status.innerHTML = html;
   status.hidden = !html;
 }
@@ -468,52 +483,64 @@ function nextProbe(candidates) {
 }
 
 /** Asks for a key, pointing at it on the drawn board so it can be found. */
-function askForKey(code) {
-  setDetectStatus(t(`detect.probe.${code}`));
-  app.welcomeView?.highlightKey(code);
+function askForKey(host, code) {
+  setDetectStatus(host, t(`detect.probe.${code}`));
+  DETECTORS[host].board()?.highlightKey(code);
 }
 
-function stopDetecting(message = '') {
-  app.detect = null;
-  app.welcomeView?.clearHighlights();
-  $('#detect-start').textContent = t('detect.start');
-  setDetectStatus(message);
+function stopDetecting(host, message = '') {
+  if (app.detect?.host === host) app.detect = null;
+  DETECTORS[host].board()?.clearHighlights();
+  $(DETECTORS[host].button).textContent = t('detect.start');
+  setDetectStatus(host, message);
 }
 
-function startDetecting() {
-  app.detect = LAYOUT_LIST.slice();
-  $('#detect-start').textContent = t('detect.cancel');
-  askForKey(nextProbe(app.detect));
+function startDetecting(host) {
+  if (app.detect) stopDetecting(app.detect.host);
+  app.detect = { host, candidates: LAYOUT_LIST.slice() };
+  $(DETECTORS[host].button).textContent = t('detect.cancel');
+  askForKey(host, nextProbe(app.detect.candidates));
 }
 
 function readDetectKey(event) {
   if (!app.detect) return;
+  const { host, candidates } = app.detect;
+
   if (event.key === 'Escape') {
     event.preventDefault();
-    stopDetecting();
+    stopDetecting(host);
     return;
   }
-  // While the keyboard is being read, no key belongs to the buttons behind.
+  // While the keyboard is being read, no key belongs to the controls behind.
   event.preventDefault();
   // Modifiers, function keys and dead keys report a name, not a character.
   if (event.key.length !== 1) return;
 
-  const narrowed = narrowLayouts(app.detect, event.code, event.key.toLowerCase());
+  const narrowed = narrowLayouts(candidates, event.code, event.key.toLowerCase());
   if (narrowed.length === 1) {
     const [layout] = narrowed;
     applyLayout(layout.id);
-    stopDetecting(t('detect.done', { name: layout.name }));
+    stopDetecting(host, t('detect.done', { name: layout.name }));
     return;
   }
 
   const probe = narrowed.length ? nextProbe(narrowed) : null;
   if (!probe) {
     // Either nothing matched, or what is left cannot be told apart by asking.
-    stopDetecting(t('detect.unknown'));
+    stopDetecting(host, t('detect.unknown'));
     return;
   }
-  app.detect = narrowed;
-  askForKey(probe);
+  app.detect = { host, candidates: narrowed };
+  askForKey(host, probe);
+}
+
+/** Wires one detector: its button toggles it, its dialog feeds it key presses. */
+function initDetector(host, dialog) {
+  $(DETECTORS[host].button).addEventListener('click', () => {
+    if (app.detect?.host === host) stopDetecting(host);
+    else startDetecting(host);
+  });
+  dialog.addEventListener('keydown', readDetectKey);
 }
 
 /* -------------------------------------------------------------- lessons */
@@ -956,9 +983,14 @@ function initSettings() {
   $('#setting-keyboard').checked = app.settings.showKeyboard;
   $('#setting-hands').checked = app.settings.showHands;
 
+  initDetector('settings', dialog);
+
   $('#settings-open').addEventListener('click', openSettings);
   $('#settings-close').addEventListener('click', () => dialog.close());
-  dialog.addEventListener('close', () => app.input?.focus());
+  dialog.addEventListener('close', () => {
+    stopDetecting('settings');
+    app.input?.focus();
+  });
 
   $('#setting-language').addEventListener('change', (event) => applyLanguage(event.target.value));
   $('#setting-layout').addEventListener('change', (event) => applyLayout(event.target.value));

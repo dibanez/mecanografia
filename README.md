@@ -28,16 +28,16 @@ publica en GitHub Pages con una página por idioma.
   tecleando una lección no interrumpe — vuelve a intentarlo en la siguiente
   visita.
 - **Configurador (⚙ en la barra superior)**: idioma de la interfaz, distribución
-  del teclado y tipo de teclado físico, con una vista previa en vivo. Todo se
-  recuerda en `localStorage`.
+  del teclado —a mano o con el detector— y tipo de teclado físico, con una vista
+  previa en vivo. Todo se recuerda en `localStorage`.
 - **Una página por idioma**: español en la raíz e inglés en `/en/`, cada una con
   su `<title>`, su descripción, su Open Graph y su `hreflang`, y las dos
   pregeneradas para que un buscador las lea sin ejecutar JavaScript. El idioma
   es independiente de la distribución: puedes practicar el teclado español con
   la interfaz en inglés o al revés.
-- **Detector de distribución**: el botón «Averiguarlo pulsando teclas» de la
-  bienvenida señala una tecla en el dibujo, mira qué carácter manda el navegador
-  al pulsarla y descarta las distribuciones que no encajan. La tecla a la derecha
+- **Detector de distribución**: el botón «Averiguarlo pulsando teclas», en la
+  bienvenida y en los ajustes, señala una tecla en el dibujo, mira qué carácter
+  manda el navegador al pulsarla y descarta las distribuciones que no encajan. La tecla a la derecha
   de la <kbd>L</kbd> ya separa la española (`ñ`) de las tres inglesas (`;`); dos
   pulsaciones más distinguen US, UK y UK de Apple. Si el teclado no es ninguno de
   los cuatro, lo dice en vez de elegir por elegir.
