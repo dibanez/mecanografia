@@ -278,6 +278,31 @@ textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
   66% { transform: translateX(3px); }
 }
 
+/*
+ * The one message practice raises on its own, so it reads as a warning about
+ * the setup and not as one more hint about the exercise.
+ */
+.layout-warning {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  border: 1px solid color-mix(in srgb, var(--error) 45%, var(--border));
+  border-left-width: 3px;
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--error) 9%, var(--bg-elevated));
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.4rem;
+}
+.layout-warning[hidden] { display: none; }
+.layout-warning__text { flex: 1 1 260px; margin: 0; font-size: 0.88rem; line-height: 1.5; }
+.layout-warning__text code {
+  font-family: var(--font-mono);
+  background: var(--bg-sunken);
+  border-radius: 4px;
+  padding: 0.05em 0.35em;
+}
+
 /* ---------------------------------------------------- keyboard and hands */
 .guide { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.2rem; }
 @media (min-width: 900px) {

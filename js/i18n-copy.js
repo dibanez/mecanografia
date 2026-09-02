@@ -213,6 +213,13 @@ export const COPY = {
     'practice.restart': 'Reiniciar',
     'practice.next': 'Siguiente lección →',
     'practice.hint': 'Empieza a escribir para arrancar el cronómetro',
+    'practice.layoutMismatch':
+      'Has pulsado la tecla que en <b>{name}</b> escribe <code>{drawn}</code>, pero tu sistema ha ' +
+      'escrito <code>{typed}</code>. El teclado que tienes puesto no es el que hay dibujado, así que ' +
+      'las teclas no están donde te dice: cámbialo en el sistema operativo, o elige aquí el que ' +
+      'usas de verdad.',
+    'practice.layoutSwitch': 'Cambiar a {name}',
+    'practice.layoutSettings': 'Elegir el teclado',
     'practice.area': 'Área de escritura',
     'practice.subtitle': '{subtitle} · objetivo {wpm} ppm',
     'practice.subtitleAlone': 'Objetivo: {wpm} ppm con 97 % de precisión',
@@ -508,6 +515,12 @@ export const COPY = {
     'practice.restart': 'Restart',
     'practice.next': 'Next lesson →',
     'practice.hint': 'Start typing to run the clock',
+    'practice.layoutMismatch':
+      'You pressed the key that types <code>{drawn}</code> on <b>{name}</b>, but your system typed ' +
+      '<code>{typed}</code>. The keyboard you are set to is not the one drawn here, so the keys are ' +
+      'not where it says: change it in the operating system, or pick the one you really use.',
+    'practice.layoutSwitch': 'Switch to {name}',
+    'practice.layoutSettings': 'Pick the keyboard',
     'practice.area': 'Typing area',
     'practice.subtitle': '{subtitle} · target {wpm} wpm',
     'practice.subtitleAlone': 'Target: {wpm} wpm with 97% accuracy',

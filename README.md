@@ -41,6 +41,12 @@ publica en GitHub Pages con una página por idioma.
   de la <kbd>L</kbd> ya separa la española (`ñ`) de las tres inglesas (`;`); dos
   pulsaciones más distinguen US, UK y UK de Apple. Si el teclado no es ninguno de
   los cuatro, lo dice en vez de elegir por elegir.
+- **Aviso de distribución equivocada**: la práctica hace la misma comprobación sin
+  que nadie la pida. Si una tecla escribe `;` donde el teclado dibujado tiene `ñ`,
+  la distribución elegida no es la que tiene puesta el sistema, y con el modo
+  estricto eso se ve como un cursor que no avanza por mucho que se acierte la
+  tecla. Lo dice bajo el área de escritura y, cuando una sola distribución explica
+  lo que ha llegado, ofrece cambiarse a ella de un clic.
 - **Cuatro distribuciones**: español (ISO), inglés US (ANSI), inglés UK (ISO) e
   inglés UK de Apple. La distribución decide qué carácter da cada tecla y con
   ella el temario. La británica de Apple no es la de Windows: la `@` está en

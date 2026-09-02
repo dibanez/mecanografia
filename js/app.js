@@ -46,6 +46,10 @@ import { store } from './storage.js';
 
 const $ = (selector) => document.querySelector(selector);
 
+/** For the few messages built with markup around a character someone typed. */
+const escapeHtml = (value) =>
+  value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
 const app = {
   lesson: null,
   lastResult: null,
@@ -60,6 +64,9 @@ const app = {
   // Running detector, as { host, candidates }: the layouts still compatible
   // with everything typed into it.
   detect: null,
+  // What practice has caught the real keyboard doing, as { typed, drawn,
+  // candidates }: set by the first press that the chosen layout cannot explain.
+  layoutDoubt: null,
   input: null,
   charEls: [],
   deadPending: false,
@@ -134,6 +141,7 @@ function preferredCourse() {
 function applyLayout(layoutId, { rerender = true } = {}) {
   app.layout = getLayout(layoutId);
   app.course = preferredCourse();
+  app.layoutDoubt = null;
   app.settings = store.saveSettings({ layout: app.layout.id });
   // Routing switches the layout too, so no dialog can be left behind.
   $('#setting-layout').value = app.layout.id;
@@ -534,6 +542,66 @@ function readDetectKey(event) {
   askForKey(host, probe);
 }
 
+/**
+ * The same reading, but taken while practising instead of on request.
+ *
+ * The chosen layout is a claim about the keyboard the system is set to, and
+ * every press can check it: a key that types ; where the drawn board says ñ
+ * proves the two disagree, and nothing else explains it, because a mistyped
+ * key still types what that layout says it types. Without this the visitor
+ * presses the right key, watches the cursor refuse to move and has no way to
+ * know the fault is in a setting rather than in their finger.
+ */
+function checkLayout(event) {
+  if (app.layoutDoubt) return;
+  // A dead key composes with the press after it, which then types a character
+  // no single key produces; modifiers, shortcuts and AltGr type nothing here.
+  if (event.key.length !== 1) return;
+  if (app.deadPending || event.isComposing || event.ctrlKey || event.metaKey) return;
+
+  const typed = event.key.toLowerCase();
+  if (narrowLayouts([app.layout], event.code, typed).length) return;
+
+  const key = app.layout.keys[event.code];
+  app.layoutDoubt = {
+    typed: event.key,
+    drawn: (event.shiftKey && key.shift) || key.base,
+    candidates: narrowLayouts(LAYOUT_LIST, event.code, typed),
+  };
+  renderLayoutWarning();
+}
+
+/** Says what the keyboard just did, and offers the layout that would fit. */
+function renderLayoutWarning() {
+  const warning = $('#layout-warning');
+  const doubt = app.layoutDoubt;
+  warning.hidden = !doubt;
+  if (!doubt) return;
+
+  $('#layout-warning-text').innerHTML = t('practice.layoutMismatch', {
+    name: escapeHtml(app.layout.name),
+    drawn: escapeHtml(doubt.drawn),
+    typed: escapeHtml(doubt.typed),
+  });
+
+  // One survivor names the keyboard outright; several can only be told apart
+  // by asking for more keys, which is what the detector in the settings does.
+  const match = doubt.candidates.length === 1 ? doubt.candidates[0] : null;
+  const button = $('#layout-warning-action');
+  button.textContent = match
+    ? t('practice.layoutSwitch', { name: match.name })
+    : t('practice.layoutSettings');
+  button.dataset.layout = match ? match.id : '';
+}
+
+function initLayoutWarning() {
+  $('#layout-warning-action').addEventListener('click', (event) => {
+    const { layout } = event.currentTarget.dataset;
+    if (layout) applyLayout(layout);
+    else openSettings();
+  });
+}
+
 /** Wires one detector: its button toggles it, its dialog feeds it key presses. */
 function initDetector(host, dialog) {
   $(DETECTORS[host].button).addEventListener('click', () => {
@@ -687,6 +755,7 @@ function ensureInput() {
     }
     if (event.key === 'Enter' || event.key === 'Tab') event.preventDefault();
     if (event.key.length === 1 || event.key === ' ') app.view.flash(event.code, true);
+    checkLayout(event);
   });
 
   input.addEventListener('focus', () => $('#typing').classList.add('is-focused'));
@@ -701,6 +770,8 @@ function startLesson(lesson, customText = null) {
   const text = customText ?? buildExercise(lesson);
   app.engine = new TypingEngine(text, { strict: app.settings.strict });
   app.deadPending = false;
+  app.layoutDoubt = null;
+  renderLayoutWarning();
   app.charEls = [];
   $('#typing-text').textContent = '';
 
@@ -1059,6 +1130,7 @@ function init() {
   initTutorial();
   initSettings();
   initWelcome();
+  initLayoutWarning();
   applyDisplaySettings();
   $('#setting-layer-note').hidden = !app.keyboard.layerCodes.length || !app.form.layered;
   updateAppleNote();
